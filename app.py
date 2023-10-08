@@ -1,1 +1,1 @@
-
+print("DSpace is fun")
