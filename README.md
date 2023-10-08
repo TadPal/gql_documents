@@ -1,1 +1,1 @@
-# dspace_unob
+# Implementation of DSpace for UNOB intranet.
