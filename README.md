@@ -40,7 +40,7 @@ pytest --cov-report term-missing --cov=gql_externalids tests
 Linux demo run:
 DEMO=true uvicorn main:app --reload
 
-##<br/>Time schedule<br/>
+##Time schedule
 <br/>
 9.10. 2023 zveřejnění harmonogramu 
 <br/>
