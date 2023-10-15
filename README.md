@@ -39,3 +39,40 @@ pytest --cov-report term-missing --cov=gql_externalids tests
 
 Linux demo run:
 DEMO=true uvicorn main:app --reload
+
+<br/>Time schedule<br/>
+<br/>
+9.10. 2023 zveřejnění harmonogramu 
+<br/>
+
+<br/>
+16. 10. 2023 projektový den, porozumění projektu
+<br/>
+
+<br/>
+27. 11. 2023 projektový den, Prezentace alespoň RU operací
+integrujte obecné dokumenty (docx, pdf, …),
+Vytvořte entitu DocumentGQLModel (včetně CRUD) 5 b 
+<br/>
+
+<br/>
+15. 1. 2024 projektový den, Alfa verze
+Zabezpečte možnost svázat dokumenty s uživatelem (UserGQLModel) (1:N) a se skupinou (GroupGQLModel) relace typu 1:N.
+systémovou integraci tvořte s využitím DSPACE.
+<br/>
+
+<br/>
+21. 1. 2024 uzavření projektu
+docker_compose s backend DSPACE, funkční systémová integrace 30 b.
+<br/>
+
+<br/>
+22. 1. 2024 počátek zkouškového období, 
+Po konzultaci je možné realizovat API typu REST pomocí FastAPI.
+návrh a ukázková implementace zprostředkované autentizace na DSpace 10 b.
+<br/>
+
+<br/>
+?. 3. 2024 konec zkouškového období. 
+Zabezpečte funkcionalitu pro ukládání a správu závěrečných prací studentů
+<br/>
