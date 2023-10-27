@@ -29,3 +29,9 @@ yarn-error.log*
 
 config.json
 data.json
+<<<<<<< HEAD
+=======
+
+__pycache__
+.vscode
+>>>>>>> 2ba6e8776e1260e7c872c6024bec2b7041ffc0fc
