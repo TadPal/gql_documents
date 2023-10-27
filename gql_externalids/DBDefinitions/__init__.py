@@ -53,7 +53,7 @@ def ComposeConnectionString():
     """
     user = os.environ.get("POSTGRES_USER", "postgres")
     password = os.environ.get("POSTGRES_PASSWORD", "example")
-    database = os.environ.get("POSTGRES_DB", "data")
+    database = os.environ.get("POSTGRES_DB", "newdatabase")
     hostWithPort = os.environ.get("POSTGRES_HOST", "localhost:5432")
 
     driver = "postgresql+asyncpg"  # "postgresql+psycopg2"
