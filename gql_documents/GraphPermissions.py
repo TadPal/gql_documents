@@ -1,9 +1,10 @@
 from sqlalchemy.future import select
 import strawberry
 
-from gql_externalids.DBDefinitions import (
+from gql_documents.DBDefinitions import (
     BaseModel,
 )
+
 
 def AsyncSessionFromInfo(info):
     return info.context["session"]
@@ -12,14 +13,17 @@ def AsyncSessionFromInfo(info):
 def UserFromInfo(info):
     return info.context["user"]
 
+
 import os
 import aiohttp
 
-GQL_PROXY = os.environ.get("GQL_PROXY", "http://localhost:31180/api/gql") # http://apollo:3000/api/gql/
+GQL_PROXY = os.environ.get(
+    "GQL_PROXY", "http://localhost:31180/api/gql"
+)  # http://apollo:3000/api/gql/
+
+
 async def getUserFromHeaders(headers):
-    user = {
-        "id": "f8089aa6-2c4a-4746-9503-105fcc5d054c"
-    }
+    user = {"id": "f8089aa6-2c4a-4746-9503-105fcc5d054c"}
 
     if os.environ.get("DEMO", None) == "true":
         user = {
@@ -29,32 +33,32 @@ async def getUserFromHeaders(headers):
             "email": "john.newbie@world.com",
             "roles": [
                 {
-                "valid": True,
-                "group": {
-                    "id": "2d9dcd22-a4a2-11ed-b9df-0242ac120003",
-                    "name": "Uni"
-                },
-                "roletype": {
-                    "id": "ced46aa4-3217-4fc1-b79d-f6be7d21c6b6",
-                    "name": "administrátor"
-                }
+                    "valid": True,
+                    "group": {
+                        "id": "2d9dcd22-a4a2-11ed-b9df-0242ac120003",
+                        "name": "Uni",
+                    },
+                    "roletype": {
+                        "id": "ced46aa4-3217-4fc1-b79d-f6be7d21c6b6",
+                        "name": "administrátor",
+                    },
                 },
                 {
-                "valid": True,
-                "group": {
-                    "id": "2d9dcd22-a4a2-11ed-b9df-0242ac120003",
-                    "name": "Uni"
+                    "valid": True,
+                    "group": {
+                        "id": "2d9dcd22-a4a2-11ed-b9df-0242ac120003",
+                        "name": "Uni",
+                    },
+                    "roletype": {
+                        "id": "ae3f0d74-6159-11ed-b753-0242ac120003",
+                        "name": "rektor",
+                    },
                 },
-                "roletype": {
-                    "id": "ae3f0d74-6159-11ed-b753-0242ac120003",
-                    "name": "rektor"
-                }
-                }
-            ]
+            ],
         }
     else:
-
-        gqlQuery = {"query": '''
+        gqlQuery = {
+            "query": """
             query($id: ID!){
                 result: userById(id: $id) {
                     id
@@ -68,7 +72,8 @@ async def getUserFromHeaders(headers):
                     }
                 }
             }
-        '''}
+        """
+        }
         gqlQuery["variables"] = {"id": user["id"]}
 
         # print(demoquery)
@@ -76,7 +81,7 @@ async def getUserFromHeaders(headers):
         async with aiohttp.ClientSession() as session:
             async with session.post(GQL_PROXY, json=gqlQuery, headers=headers) as resp:
                 # print(resp.status)
-                json = await resp.json()        
+                json = await resp.json()
         user = json["data"]["result"]
     print("Permission for user", user, flush=True)
 

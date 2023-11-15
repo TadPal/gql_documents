@@ -10,10 +10,10 @@ from strawberry.fastapi import GraphQLRouter
 ## Definice DB typu (pomoci SQLAlchemy https://www.sqlalchemy.org/)
 ## SQLAlchemy zvoleno kvuli moznost komunikovat s DB asynchronne
 ## https://docs.sqlalchemy.org/en/14/core/future.html?highlight=select#sqlalchemy.future.select
-from gql_externalids.DBDefinitions import startEngine, ComposeConnectionString
+from gql_documents.DBDefinitions import startEngine, ComposeConnectionString
 
 ## Zabezpecuje prvotni inicializaci DB a definovani Nahodne struktury pro "Univerzity"
-from gql_externalids.DBFeeder import initDB
+from gql_documents.DBFeeder import initDB
 
 connectionString = ComposeConnectionString()
 
@@ -49,6 +49,7 @@ async def RunOnceAndReturnSessionMaker():
     print(f'starting engine for "{connectionString}"')
 
     import os
+
     makeDrop = os.environ.get("DEMO", "") == "true"
     result = await startEngine(
         connectionstring=connectionString, makeDrop=makeDrop, makeUp=True
@@ -75,7 +76,9 @@ async def RunOnceAndReturnSessionMaker():
 
 from strawberry.asgi import GraphQL
 
-from gql_externalids.Dataloaders import createLoaders_3
+from gql_documents.Dataloaders import createLoaders_3
+
+
 class MyGraphQL(GraphQL):
     """Rozsirena trida zabezpecujici praci se session"""
 
@@ -102,13 +105,13 @@ class MyGraphQL(GraphQL):
             "session": self._session,
             "asyncSessionMaker": asyncSessionMaker,
             "user": self._user,
-            "all": await createLoaders_3(asyncSessionMaker)
+            "all": await createLoaders_3(asyncSessionMaker),
         }
 
 
 ## Definice GraphQL typu (pomoci strawberry https://strawberry.rocks/)
 ## Strawberry zvoleno kvuli moznosti mit federovane GraphQL API (https://strawberry.rocks/docs/guides/federation, https://www.apollographql.com/docs/federation/)
-from gql_externalids.GraphTypeDefinitions import schema
+from gql_documents.GraphTypeDefinitions import schema
 
 ## ASGI app, kterou "moutneme"
 graphql_app = MyGraphQL(schema, graphiql=True, allow_queries_via_get=True)

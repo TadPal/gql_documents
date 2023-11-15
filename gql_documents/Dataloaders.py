@@ -1,9 +1,14 @@
 from uoishelpers.dataloaders import createIdLoader, createFkeyLoader
 from functools import cache
 
-from gql_externalids.DBDefinitions import ExternalIdModel, ExternalIdTypeModel, ExternalIdCategoryModel
-async def createLoaders_3(asyncSessionMaker):
+from gql_documents.DBDefinitions import (
+    ExternalIdModel,
+    ExternalIdTypeModel,
+    ExternalIdCategoryModel,
+)
 
+
+async def createLoaders_3(asyncSessionMaker):
     class Loaders:
         @property
         @cache
