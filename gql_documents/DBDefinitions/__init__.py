@@ -8,10 +8,10 @@ from .Base import BaseModel
 #
 ###########################################################################################################################
 
-from .ExternalIdCategoryModel import ExternalIdCategoryModel
-from .ExternalIdTypeModel import ExternalIdTypeModel
-from .ExternalIdModel import ExternalIdModel
-
+from .externalIdCategoryModel import ExternalIdCategoryModel
+from .externalIdTypeModel import ExternalIdTypeModel
+from .externalIdModel import ExternalIdModel
+from .documentDBModel import DocumentModel
 
 
 from sqlalchemy import create_engine

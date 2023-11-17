@@ -5,6 +5,7 @@ from gql_documents.DBDefinitions import (
     ExternalIdModel,
     ExternalIdTypeModel,
     ExternalIdCategoryModel,
+    DocumentModel,
 )
 
 
@@ -31,5 +32,10 @@ async def createLoaders_3(asyncSessionMaker):
             return createFkeyLoader(
                 asyncSessionMaker, ExternalIdModel, foreignKeyName="inner_id"
             )
+
+        @property
+        @cache
+        def documents(self):
+            return createIdLoader(asyncSessionMaker, DocumentModel)
 
     return Loaders()

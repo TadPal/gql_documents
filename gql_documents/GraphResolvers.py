@@ -22,7 +22,11 @@ from gql_documents.DBDefinitions import BaseModel
 #
 ###########################################################################################################################
 
-from gql_documents.DBDefinitions import ExternalIdModel, ExternalIdTypeModel
+from gql_documents.DBDefinitions import (
+    ExternalIdModel,
+    ExternalIdTypeModel,
+    DocumentModel,
+)
 
 
 ###########################################################################################################################
@@ -39,6 +43,8 @@ resolveExternalIdById = createEntityByIdGetter(ExternalIdModel)
 
 resolveExternalTypeById = createEntityByIdGetter(ExternalIdTypeModel)
 resolveExternalTypePaged = createEntityGetter(ExternalIdTypeModel)
+
+resolveDocumentsPage = createEntityGetter(DocumentModel)
 
 
 async def resolveExternalIdIntoInnerId(session, externalid, typeid):
