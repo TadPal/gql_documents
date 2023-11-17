@@ -150,7 +150,7 @@ def get_demodata():
                 json_dict[key] = dateValueWOtzinfo
         return json_dict
 
-    with open("./systemdata.json", "r") as f:
+    with open("./systemdata.json", "r", encoding="utf-8") as f:
         jsonData = json.load(f, object_hook=datetime_parser)
 
     return jsonData
