@@ -28,3 +28,11 @@ class Query:
     from .externalIdCategoryGQLModel import externalidcategory_page
 
     externalidcategory_page = externalidcategory_page
+
+    from .documentGQLmodel import documents_page
+
+    documents_page = documents_page
+
+    from .documentGQLmodel import document_by_id
+
+    document_by_id = document_by_id
