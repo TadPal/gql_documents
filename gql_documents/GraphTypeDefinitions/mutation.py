@@ -31,8 +31,12 @@ class Mutation:
 
     document_insert = document_insert
 
+    from .documentGQLmodel import document_update
+
+    document_update = document_update
+
     from .documentGQLmodel import document_delete
 
-    document_update = document_delete
+    document_delete = document_delete
 
     pass

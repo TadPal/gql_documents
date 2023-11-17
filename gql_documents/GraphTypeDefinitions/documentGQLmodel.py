@@ -112,21 +112,31 @@ class DocumentInsertGQLModel:
     dspace_id: strawberry.ID = strawberry.field(
         default=None, description="Primary key of dspace entity"
     )
-    description: str = strawberry.field(
+    description: Optional[str] = strawberry.field(
         default=None, description="Brief description of document"
     )
-    author: strawberry.Private[strawberry.ID] = None
+    name: str = strawberry.field(default="Name", description="Document name")
+    author: Optional[strawberry.ID] = strawberry.field(
+        default=None, description="Author"
+    )
 
 
 @strawberry.input()
 class DocumentUpdateGQLModel:
-    dspace_id: strawberry.ID = strawberry.field(
+    id: strawberry.ID = strawberry.field(default=None, description="Primary key")
+    lastchange: datetime.datetime = strawberry.field(
+        default=None, description="Timestamp"
+    )
+    dspace_id: Optional[strawberry.ID] = strawberry.field(
         default=None, description="Primary key of dspace entity"
     )
-    description: str = strawberry.field(
+    description: Optional[str] = strawberry.field(
         default=None, description="Brief description of document"
     )
-    author: strawberry.Private[strawberry.ID] = None
+    name: Optional[str] = strawberry.field(default="Name", description="Document name")
+    author: Optional[strawberry.ID] = strawberry.field(
+        default=None, description="Author"
+    )
 
 
 @strawberry.type()
@@ -163,6 +173,24 @@ async def document_insert(
     else:
         result.id = row.id
         result.msg = "fail"
+    return result
+
+
+@strawberry.mutation(description="Update existing document")
+async def document_update(
+    self, info: strawberry.types.Info, document: DocumentUpdateGQLModel
+) -> DocumentResultGQLModel:
+    loader = getLoaders(info).documents
+
+    result = DocumentResultGQLModel()
+    row = await loader.update(document)
+    if row is None:
+        result.id = None
+        result.msg = "fail"
+    else:
+        result.id = row.id
+        result.msg = "ok"
+
     return result
 
 
