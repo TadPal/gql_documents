@@ -1,8 +1,5 @@
 import uuid
-from sqlalchemy import (
-    Column,
-    String
-)
+from sqlalchemy import Column, String
 
 
 def newUuidAsString():
@@ -20,10 +17,6 @@ def UUIDColumn(name=None):
 
 def UUIDFKey(*, ForeignKey=None, nullable=False):
     if ForeignKey is None:
-        return Column(
-            String, index=True, nullable=nullable
-        )
+        return Column(String, index=True, nullable=nullable)
     else:
-        return Column(
-            ForeignKey, index=True, nullable=nullable
-        )
+        return Column(ForeignKey, index=True, nullable=nullable)

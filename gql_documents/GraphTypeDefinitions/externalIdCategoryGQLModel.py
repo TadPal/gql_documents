@@ -57,14 +57,14 @@ class ExternalIdCategoryGQLModel:
     @strawberry.field(description="""Who created it""")
     def created_by(self) -> Optional["UserGQLModel"]:
         # sync method which returns Awaitable :)
-        return gql_externalids.GraphTypeDefinitions.UserGQLModel.resolve_reference(
+        return gql_documents.GraphTypeDefinitions.UserGQLModel.resolve_reference(
             id=self.createdby
         )
 
     @strawberry.field(description="""Who updated it""")
     def changed_by(self) -> Optional["UserGQLModel"]:
         # sync method which returns Awaitable :)
-        return gql_externalids.GraphTypeDefinitions.UserGQLModel.resolve_reference(
+        return gql_documents.GraphTypeDefinitions.UserGQLModel.resolve_reference(
             id=self.changedby
         )
 
