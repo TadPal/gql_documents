@@ -48,7 +48,7 @@ class DocumentGQLModel:
         return self.id
 
     @strawberry.field(description="""Brief description""")
-    def description(self) -> str:
+    def description(self) -> Optional[str]:
         return self.description
 
     @strawberry.field(description="""Document Name""")
