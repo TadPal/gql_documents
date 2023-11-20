@@ -7,7 +7,7 @@ import pytest
 
 # from ..uoishelpers.uuid import UUIDColumn
 
-from gql_externalids.GraphTypeDefinitions import schema
+from gql_documents.GraphTypeDefinitions import schema
 
 from .shared import (
     prepare_demodata,
@@ -84,12 +84,12 @@ from typing import List
 #             rowid = row['id']
 
 #             query = (
-#                 'query { _entities(representations: [{ __typename: '+ f'"{gqltype}", id: "{rowid}"' + 
+#                 'query { _entities(representations: [{ __typename: '+ f'"{gqltype}", id: "{rowid}"' +
 #                 ' }])' +
 #                 '{' +
-#                 f'...on {gqltype}' + 
+#                 f'...on {gqltype}' +
 #                 '{ id }'+
-#                 '}' + 
+#                 '}' +
 #                 '}')
 
 #             context_value = await createContext(async_session_maker)
@@ -101,9 +101,9 @@ from typing import List
 #             assert data['id'] == rowid
 
 #     return result_test
-    
-#test_query_externalids_by_id = createByIdTest(tableName="externalids", queryEndpoint="eventById")
-#test_query_externalidtypes_by_id = createByIdTest(tableName="externalidtypes", queryEndpoint="eventTypeById")
+
+# test_query_externalids_by_id = createByIdTest(tableName="externalids", queryEndpoint="eventById")
+# test_query_externalidtypes_by_id = createByIdTest(tableName="externalidtypes", queryEndpoint="eventTypeById")
 
 
 @pytest.mark.asyncio
@@ -112,28 +112,30 @@ async def test_external_ids():
     await prepare_demodata(async_session_maker)
 
     data = get_demodata()
-    table = data['externalids']
+    table = data["externalids"]
     row = table[0]
-    query = '''query($id: ID!){
+    query = """query($id: ID!){
         externalIds(innerId: $id ) { 
             id
             innerId
             outerId
         }
-    }'''
+    }"""
 
-    variable_values = {"id": row['inner_id']}
+    variable_values = {"id": row["inner_id"]}
     context_value = await createContext(async_session_maker)
-    resp = await schema.execute(query, context_value=context_value, variable_values=variable_values)
+    resp = await schema.execute(
+        query, context_value=context_value, variable_values=variable_values
+    )
     print(resp, flush=True)
 
-    #respdata = resp.data['eventById']
+    # respdata = resp.data['eventById']
     assert resp.errors is None
 
     data = resp.data
 
-    assert data['externalIds'][0]['innerId'] == row['inner_id']
-    assert data['externalIds'][0]['outerId'] == row['outer_id']
+    assert data["externalIds"][0]["innerId"] == row["inner_id"]
+    assert data["externalIds"][0]["outerId"] == row["outer_id"]
 
 
 @pytest.mark.asyncio
@@ -142,22 +144,23 @@ async def test_internal_ids():
     await prepare_demodata(async_session_maker)
 
     data = get_demodata()
-    table = data['externalids']
+    table = data["externalids"]
     row = table[0]
     print(row, flush=True)
-    query = '''query($id: String! $type_id: ID!){
-        internalId(outerId: $id typeidId: $type_id) }'''
+    query = """query($id: String! $type_id: ID!){
+        internalId(outerId: $id typeidId: $type_id) }"""
 
-    variable_values = {"id": row['outer_id'], "type_id": row["typeid_id"]}
+    variable_values = {"id": row["outer_id"], "type_id": row["typeid_id"]}
     context_value = await createContext(async_session_maker)
-    resp = await schema.execute(query, context_value=context_value, variable_values=variable_values)
+    resp = await schema.execute(
+        query, context_value=context_value, variable_values=variable_values
+    )
 
     assert resp.errors is None
     data = resp.data
     print(data, flush=True)
 
-    assert data['internalId'] == row['inner_id']
-
+    assert data["internalId"] == row["inner_id"]
 
 
 @pytest.mark.asyncio
@@ -167,9 +170,9 @@ async def test_representation_externalid():
 
     data = get_demodata()
 
-    id = data['externalids'][0]['id']
+    id = data["externalids"][0]["id"]
 
-    query = '''
+    query = """
             query($id: ID!) {
                 _entities(representations: [{ __typename: "ExternalIdGQLModel", id: $id }]) {
                     ...on ExternalIdGQLModel {
@@ -179,15 +182,18 @@ async def test_representation_externalid():
                     }
                 }
             }
-        '''
+        """
     variable_values = {"id": id}
     context_value = await createContext(async_session_maker)
-    resp = await schema.execute(query, context_value=context_value, variable_values=variable_values)
-    
+    resp = await schema.execute(
+        query, context_value=context_value, variable_values=variable_values
+    )
+
     print(resp, flush=True)
-    respdata = resp.data['_entities']
-    assert respdata[0]['id'] == id
+    respdata = resp.data["_entities"]
+    assert respdata[0]["id"] == id
     assert resp.errors is None
+
 
 # @pytest.mark.asyncio
 # async def test_representation_user_editor():
@@ -210,7 +216,7 @@ async def test_representation_externalid():
 
 #     context_value = await createContext(async_session_maker)
 #     resp = await schema.execute(query, context_value=context_value)
-    
+
 #     print(resp, flush=True)
 #     respdata = resp.data['_entities']
 #     assert respdata[0]['id'] == id
@@ -244,7 +250,7 @@ async def test_representation_externalid():
 
 #     context_value = await createContext(async_session_maker)
 #     resp = await schema.execute(query, context_value=context_value)
-    
+
 #     print(resp, flush=True)
 #     respdata = resp.data['_entities']
 #     assert respdata[0]['externalIds'][0]['innerId'] == row['id']
@@ -278,7 +284,7 @@ async def test_representation_externalid():
 
 #     context_value = await createContext(async_session_maker)
 #     resp = await schema.execute(query, context_value=context_value)
-    
+
 #     print(resp, flush=True)
 #     respdata = resp.data['_entities']
 #     assert respdata[0]['externalIds'][0]['innerId'] == row['id']
@@ -291,11 +297,11 @@ async def test_group_add_external_id():
     await prepare_demodata(async_session_maker)
 
     data = get_demodata()
-    table = data['groups']
+    table = data["groups"]
     row = table[0]
-    id = row['id']
+    id = row["id"]
 
-    query = '''
+    query = """
             mutation(
                 $inner_id: ID!
                 $typeid_id: ID!
@@ -318,18 +324,24 @@ async def test_group_add_external_id():
                     }
                 }
             }
-        '''
+        """
 
     context_value = await createContext(async_session_maker)
-    variable_values = {'inner_id': id, 'outer_id': '999', 'typeid_id': data['externalidtypes'][0]['id']}
-    resp = await schema.execute(query, context_value=context_value, variable_values=variable_values)
+    variable_values = {
+        "inner_id": id,
+        "outer_id": "999",
+        "typeid_id": data["externalidtypes"][0]["id"],
+    }
+    resp = await schema.execute(
+        query, context_value=context_value, variable_values=variable_values
+    )
     assert resp.errors is None
 
     respdata = resp.data
-    result = respdata['result']
-    assert result['externalid']['outerId'] == "999"
-    assert result['externalid']['innerId'] == id
-    
+    result = respdata["result"]
+    assert result["externalid"]["outerId"] == "999"
+    assert result["externalid"]["innerId"] == id
+
 
 @pytest.mark.asyncio
 async def test_user_add_external_id():
@@ -337,9 +349,9 @@ async def test_user_add_external_id():
     await prepare_demodata(async_session_maker)
 
     data = get_demodata()
-    table = data['groups']
+    table = data["groups"]
     row = table[0]
-    id = row['id']
+    id = row["id"]
 
     # query = '''
     #         query($id: ID!, $externalId: String!, $typeidId: ID!) {
@@ -383,20 +395,44 @@ async def test_user_add_external_id():
     # assert resp.errors is None
     # respdata = resp.data['_entities']
     # eids = list(map(lambda item: item['outerId'], respdata[0]['externalIds']))
-    
+
     # assert '999' in eids
+
 
 ##############################################################
 
-from .creators import createPageTest, createResolveReferenceTest, createResolveReferenceTestApp, createByIdTest
-test_externalidtype = createPageTest("externalidtypes", "externalidtypePage", ["id", "name"], 
-    subEntities=["createdBy{ id }", "changedBy{ id }", "nameEn", "category{ id }"])
-test_externalidcategory = createPageTest("externalidcategories", "externalidcategoryPage", ["id", "name"], subEntities=["nameEn createdBy{ id }", "changedBy{ id }"])
+from .creators import (
+    createPageTest,
+    createResolveReferenceTest,
+    createResolveReferenceTestApp,
+    createByIdTest,
+)
 
-test_externalidcategory_reference = createResolveReferenceTest("externalidcategories", "ExternalIdCategoryGQLModel")
-test_externalidtype_reference = createResolveReferenceTest("externalidtypes", "ExternalIdTypeGQLModel", subEntities=["nameEn"])
-test_externalid_reference = createResolveReferenceTest("externalids", "ExternalIdGQLModel", ["id", "lastchange"], subEntities=["typeName"])
+test_externalidtype = createPageTest(
+    "externalidtypes",
+    "externalidtypePage",
+    ["id", "name"],
+    subEntities=["createdBy{ id }", "changedBy{ id }", "nameEn", "category{ id }"],
+)
+test_externalidcategory = createPageTest(
+    "externalidcategories",
+    "externalidcategoryPage",
+    ["id", "name"],
+    subEntities=["nameEn createdBy{ id }", "changedBy{ id }"],
+)
 
-test_externaltypeid_byId = createByIdTest("externalidtypes", "externalidtypeById", ["id", "name"])
+test_externalidcategory_reference = createResolveReferenceTest(
+    "externalidcategories", "ExternalIdCategoryGQLModel"
+)
+test_externalidtype_reference = createResolveReferenceTest(
+    "externalidtypes", "ExternalIdTypeGQLModel", subEntities=["nameEn"]
+)
+test_externalid_reference = createResolveReferenceTest(
+    "externalids", "ExternalIdGQLModel", ["id", "lastchange"], subEntities=["typeName"]
+)
+
+test_externaltypeid_byId = createByIdTest(
+    "externalidtypes", "externalidtypeById", ["id", "name"]
+)
 # test_user_representation = createResolveReferenceTest("users", "UserGQLModel", ["id"])
 # test_group_representation = createResolveReferenceTest("groups", "GroupGQLModel", ["id"])
