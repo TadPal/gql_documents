@@ -156,14 +156,14 @@ class DocumentResultGQLModel:
         return result
 
 
-@strawberry.mutation(description="defines a new document")
+@strawberry.mutation(description="Defines a new document")
 async def document_insert(
     self, info: strawberry.types.Info, document: DocumentInsertGQLModel
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
 
     result = DocumentResultGQLModel()
-    rows = await loader.filter_by(dspace_id=document.dspace_id)
+    rows = await loader.filter_by(id=document.id)
     row = next(rows, None)
 
     if row is None:
@@ -200,7 +200,7 @@ async def document_delete(
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
     result = DocumentResultGQLModel()
-    rows = await loader.filter_by(dspace_id=document.dspace_id)
+    rows = await loader.filter_by(id=document.id)
     row = next(rows, None)
 
     if row is not None:
