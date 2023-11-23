@@ -117,7 +117,7 @@ class DocumentInsertGQLModel:
     )
     name: str = strawberry.field(default="Name", description="Document name")
     author: Optional[strawberry.ID] = strawberry.field(
-        default=None, description="Author"
+        default=None, description="ID of Author"
     )
 
 
@@ -135,7 +135,7 @@ class DocumentUpdateGQLModel:
     )
     name: Optional[str] = strawberry.field(default="Name", description="Document name")
     author: Optional[strawberry.ID] = strawberry.field(
-        default=None, description="Author"
+        default=None, description="ID of Author"
     )
 
 
