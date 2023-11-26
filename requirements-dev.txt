@@ -20,3 +20,5 @@ pytest
 pytest-cov
 pytest-asyncio
 aiosqlite
+
+requests

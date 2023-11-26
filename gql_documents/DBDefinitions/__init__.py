@@ -8,9 +8,9 @@ from .Base import BaseModel
 #
 ###########################################################################################################################
 
-from .externalIdCategoryModel import ExternalIdCategoryModel
-from .externalIdTypeModel import ExternalIdTypeModel
-from .externalIdModel import ExternalIdModel
+from .ExternalIdCategoryModel import ExternalIdCategoryModel
+from .ExternalIdTypeModel import ExternalIdTypeModel
+from .ExternalIdModel import ExternalIdModel
 from .documentDBModel import DocumentModel
 
 
@@ -53,7 +53,7 @@ def ComposeConnectionString():
     """
     user = os.environ.get("POSTGRES_USER", "postgres")
     password = os.environ.get("POSTGRES_PASSWORD", "example")
-    database = os.environ.get("POSTGRES_DB", "newdatabase")
+    database = os.environ.get("POSTGRES_DB", "postgres")
     hostWithPort = os.environ.get("POSTGRES_HOST", "localhost:5432")
 
     driver = "postgresql+asyncpg"  # "postgresql+psycopg2"
