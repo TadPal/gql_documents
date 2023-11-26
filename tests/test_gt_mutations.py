@@ -1,7 +1,13 @@
 import pytest
 
-from .shared import prepare_in_memory_sqllite, prepare_demodata, createContext, get_demodata
-from gql_externalids.GraphTypeDefinitions import schema
+from .shared import (
+    prepare_in_memory_sqllite,
+    prepare_demodata,
+    createContext,
+    get_demodata,
+)
+from gql_documents.GraphTypeDefinitions import schema
+
 
 @pytest.mark.asyncio
 async def test_externalid_mutation():
@@ -17,7 +23,7 @@ async def test_externalid_mutation():
     row = userstable[0]
     user_id = row["id"]
 
-    query = '''
+    query = """
             mutation(
                 $inner_id: ID!
                 $typeid_id: ID!
@@ -40,14 +46,16 @@ async def test_externalid_mutation():
                     }
                 }
             }
-        '''
+        """
 
     context_value = await createContext(async_session_maker)
-    variable_values = {'inner_id': user_id, 'outer_id': '999', 'typeid_id': type_id}
-    resp = await schema.execute(query, context_value=context_value, variable_values=variable_values)
+    variable_values = {"inner_id": user_id, "outer_id": "999", "typeid_id": type_id}
+    resp = await schema.execute(
+        query, context_value=context_value, variable_values=variable_values
+    )
     print(resp, flush=True)
     assert resp.errors is None
-    
+
     respdata = resp.data["result"]
     assert respdata is not None
     assert respdata["msg"] == "ok"
@@ -55,14 +63,17 @@ async def test_externalid_mutation():
     assert respdata["externalid"]["innerId"] == user_id
     assert respdata["externalid"]["idType"]["id"] == type_id
 
-    resp = await schema.execute(query, context_value=context_value, variable_values=variable_values)
+    resp = await schema.execute(
+        query, context_value=context_value, variable_values=variable_values
+    )
     print(resp, flush=True)
     assert resp.errors is None
-    
+
     respdata = resp.data["result"]
     assert respdata is not None
     assert respdata["msg"] == "fail"
-    
+
+
 @pytest.mark.asyncio
 async def test_externalid_delete():
     async_session_maker = await prepare_in_memory_sqllite()
@@ -77,7 +88,7 @@ async def test_externalid_delete():
     row = userstable[0]
     user_id = row["id"]
 
-    query = '''
+    query = """
             mutation(
                 $inner_id: ID!
                 $typeid_id: ID!
@@ -100,14 +111,16 @@ async def test_externalid_delete():
                     }
                 }
             }
-        '''
+        """
 
     context_value = await createContext(async_session_maker)
-    variable_values = {'inner_id': user_id, 'outer_id': '999', 'typeid_id': type_id}
-    resp = await schema.execute(query, context_value=context_value, variable_values=variable_values)
+    variable_values = {"inner_id": user_id, "outer_id": "999", "typeid_id": type_id}
+    resp = await schema.execute(
+        query, context_value=context_value, variable_values=variable_values
+    )
     print(resp, flush=True)
     assert resp.errors is None
-    
+
     respdata = resp.data["result"]
     assert respdata is not None
     assert respdata["msg"] == "ok"
@@ -117,7 +130,7 @@ async def test_externalid_delete():
 
     # idToDelete = respdata["externalid"]["id"]
 
-    query = '''
+    query = """
         mutation($inner_id: ID!
                 $typeid_id: ID!
                 $outer_id: ID!) 
@@ -131,22 +144,25 @@ async def test_externalid_delete():
                 msg
             }
         }
-        '''
-    
-    resp = await schema.execute(query, context_value=context_value, variable_values=variable_values)
+        """
+
+    resp = await schema.execute(
+        query, context_value=context_value, variable_values=variable_values
+    )
     print(resp, flush=True)
     assert resp.errors is None
-    
+
     respdata = resp.data["result"]
     assert respdata is not None
     assert respdata["msg"] == "ok"
+
 
 @pytest.mark.asyncio
 async def test_externalid_delete_fail():
     async_session_maker = await prepare_in_memory_sqllite()
     await prepare_demodata(async_session_maker)
 
-    query = '''
+    query = """
         mutation($inner_id: ID!
                 $typeid_id: ID!
                 $outer_id: ID!) 
@@ -160,14 +176,20 @@ async def test_externalid_delete_fail():
                 msg
             }
         }
-        '''
-    
+        """
+
     context_value = await createContext(async_session_maker)
-    variable_values = {'inner_id': "bbfe7a3b-de51-4bde-92e8-357e4c9b2603", 'outer_id': '999', 'typeid_id': "7fd29b7f-2adf-42a6-a840-91ea37696728"}
-    resp = await schema.execute(query, context_value=context_value, variable_values=variable_values)
+    variable_values = {
+        "inner_id": "bbfe7a3b-de51-4bde-92e8-357e4c9b2603",
+        "outer_id": "999",
+        "typeid_id": "7fd29b7f-2adf-42a6-a840-91ea37696728",
+    }
+    resp = await schema.execute(
+        query, context_value=context_value, variable_values=variable_values
+    )
     print(resp, flush=True)
     assert resp.errors is None
-    
+
     respdata = resp.data["result"]
     assert respdata is not None
     assert respdata["msg"] == "fail"

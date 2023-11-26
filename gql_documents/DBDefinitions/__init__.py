@@ -12,6 +12,7 @@ from .ExternalIdCategoryModel import ExternalIdCategoryModel
 from .ExternalIdTypeModel import ExternalIdTypeModel
 from .ExternalIdModel import ExternalIdModel
 from .documentDBModel import DocumentModel
+from .userDBModel import UserModel
 
 
 from sqlalchemy import create_engine

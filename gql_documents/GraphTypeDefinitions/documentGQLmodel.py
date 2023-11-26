@@ -117,7 +117,7 @@ class DocumentInsertGQLModel:
     )
     name: str = strawberry.field(default="Name", description="Document name")
     author: Optional[strawberry.ID] = strawberry.field(
-        default=None, description="Author"
+        default=None, description="ID of Author"
     )
 
 
@@ -135,7 +135,7 @@ class DocumentUpdateGQLModel:
     )
     name: Optional[str] = strawberry.field(default="Name", description="Document name")
     author: Optional[strawberry.ID] = strawberry.field(
-        default=None, description="Author"
+        default=None, description="ID of Author"
     )
 
 
@@ -156,14 +156,14 @@ class DocumentResultGQLModel:
         return result
 
 
-@strawberry.mutation(description="defines a new document")
+@strawberry.mutation(description="Defines a new document")
 async def document_insert(
     self, info: strawberry.types.Info, document: DocumentInsertGQLModel
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
 
     result = DocumentResultGQLModel()
-    rows = await loader.filter_by(dspace_id=document.dspace_id)
+    rows = await loader.filter_by(id=document.id)
     row = next(rows, None)
 
     if row is None:
@@ -200,7 +200,7 @@ async def document_delete(
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
     result = DocumentResultGQLModel()
-    rows = await loader.filter_by(dspace_id=document.dspace_id)
+    rows = await loader.filter_by(id=document.id)
     row = next(rows, None)
 
     if row is not None:

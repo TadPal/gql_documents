@@ -48,6 +48,8 @@ class GroupGQLModel:
 
     @classmethod
     async def resolve_reference(cls, id: strawberry.ID):
+        if id is None:
+            return None
         return GroupGQLModel(id=id)
 
     @strawberry.field(description="""All documents related to a group""")

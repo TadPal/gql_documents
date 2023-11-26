@@ -6,8 +6,12 @@ import pytest
 
 # from ..uoishelpers.uuid import UUIDColumn
 
-from gql_externalids.DBDefinitions import BaseModel
-from gql_externalids.DBDefinitions import ExternalIdTypeModel, ExternalIdModel, ExternalIdCategoryModel
+from gql_documents.DBDefinitions import BaseModel
+from gql_documents.DBDefinitions import (
+    ExternalIdTypeModel,
+    ExternalIdModel,
+    ExternalIdCategoryModel,
+)
 
 
 async def prepare_in_memory_sqllite():
@@ -27,7 +31,7 @@ async def prepare_in_memory_sqllite():
     return async_session_maker
 
 
-from gql_externalids.DBFeeder import get_demodata
+from gql_documents.DBFeeder import get_demodata
 
 
 async def prepare_demodata(async_session_maker):
@@ -37,21 +41,17 @@ async def prepare_demodata(async_session_maker):
 
     await ImportModels(
         async_session_maker,
-        [
-            ExternalIdCategoryModel,
-            ExternalIdTypeModel, 
-            ExternalIdModel
-        ],
+        [ExternalIdCategoryModel, ExternalIdTypeModel, ExternalIdModel],
         data,
     )
 
 
-from gql_externalids.Dataloaders import createLoaders_3
+from gql_documents.Dataloaders import createLoaders_3
 
 
 async def createContext(asyncSessionMaker):
     return {
         "asyncSessionMaker": asyncSessionMaker,
         "all": await createLoaders_3(asyncSessionMaker),
-        "user": {"id": "f8089aa6-2c4a-4746-9503-105fcc5d054c"}
+        "user": {"id": "f8089aa6-2c4a-4746-9503-105fcc5d054c"},
     }
