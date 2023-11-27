@@ -44,7 +44,7 @@ Linux demo run:
 DEMO=true uvicorn main:app --reload
 
 # Zadani
-DOCUMENTS (2 studenti) SOČ Paldus, Mašek
+DOCUMENTS
 
     integrujte obecné dokumenty (docx, pdf, …),
     Vytvořte entitu DocumentGQLModel (včetně CRUD) 5 b
