@@ -1,77 +1,5 @@
 {
-    "documents": [
-        {
-            "id": "e5d5286d-50d2-4b07-97de-7407c62c21c1",
-            "dspace_id": "2d9dc5ca-a4a2-11ed-b9df-0242ac120004",
-            "name": "Example name",
-            "author": "89d1f3cc-ae0f-11ed-9bd8-0242ac110002",
-            "description": "Example description"
-        },
-        {
-            "id": "04d5286d-50d2-4b07-97de-7407c62c21c1",
-            "dspace_id": "1d8dc5ca-a4a2-11ed-b9df-0242ac120004",
-            "name": "Presentation",
-            "author": "89d1f3cc-ae0f-11ed-9bd8-0242ac110002"
-        },
-        {
-            "id": "aaaaaaaa-50d2-4b07-97de-7407c62c21c1",
-            "dspace_id": "aaaaaaaa-a4a2-11ed-b9df-0242ac120004",
-            "name": "Diploma",
-            "author": "2d9dc868-a4a2-11ed-b9df-0242ac120003",
-            "description": "Brief description"
-        }
-    ],
-    "externalids": [
-        {
-            "id": "d5d5286d-50d2-4b07-97de-7407c62c21c0",
-            "inner_id": "2d9dc5ca-a4a2-11ed-b9df-0242ac120003",
-            "outer_id": "666",
-            "typeid_id": "d00ec0b6-f27c-497b-8fc8-ddb4e2460717"
-        }
-    ],
-    "externalidcategories": [
-        {
-            "id": "0ee3a92d-971f-499a-956f-ca6edb8d6094",
-            "name": "bez kategorie",
-            "name_en": "without category"
-        },
-        {
-            "id": "4061c96c-e1ed-4674-ba21-746cbd149dbf",
-            "name": "vědecké databáze",
-            "name_en": "science databases"
-        }
-    ],
-    "externalidtypes": [
-        {
-            "id": "53697b35-9f67-41e5-abed-04d7d4865cf2",
-            "name": "SCOPUS",
-            "name_en": "SCOPUS",
-            "urlformat": "https://scopus.com/%s",
-            "category_id": "4061c96c-e1ed-4674-ba21-746cbd149dbf"
-        },
-        {
-            "id": "d00ec0b6-f27c-497b-8fc8-ddb4e2460717",
-            "name": "VaV",
-            "name_en": "VaV",
-            "urlformat": "",
-            "category_id": "0ee3a92d-971f-499a-956f-ca6edb8d6094"
-        },
-        {
-            "id": "93a352ea-3bdb-47f5-a120-bcf3c6e44bbf",
-            "name": "UCO",
-            "name_en": "UCO",
-            "urlformat": "",
-            "category_id": "0ee3a92d-971f-499a-956f-ca6edb8d6094"
-        },
-        {
-            "id": "0c37b3e1-a937-4776-9543-37ae846411de",
-            "name": "UIC",
-            "name_en": "UIC",
-            "urlformat": "",
-            "category_id": "0ee3a92d-971f-499a-956f-ca6edb8d6094"
-        }
-    ],
-
+    
     "users": [
         {
             "id": "2d9dc5ca-a4a2-11ed-b9df-0242ac120003",
@@ -160,6 +88,79 @@
         }
 
     ],
+    "documents": [
+        {
+            "id": "e5d5286d-50d2-4b07-97de-7407c62c21c1",
+            "dspace_id": "2d9dc5ca-a4a2-11ed-b9df-0242ac120004",
+            "name": "Example name",
+            "author": "89d1f3cc-ae0f-11ed-9bd8-0242ac110002",
+            "description": "Example description"
+        },
+        {
+            "id": "04d5286d-50d2-4b07-97de-7407c62c21c1",
+            "dspace_id": "1d8dc5ca-a4a2-11ed-b9df-0242ac120004",
+            "name": "Presentation",
+            "author": "89d1f3cc-ae0f-11ed-9bd8-0242ac110002"
+        },
+        {
+            "id": "aaaaaaaa-50d2-4b07-97de-7407c62c21c1",
+            "dspace_id": "aaaaaaaa-a4a2-11ed-b9df-0242ac120004",
+            "name": "Diploma",
+            "author": "2d9dc868-a4a2-11ed-b9df-0242ac120003",
+            "description": "Brief description"
+        }
+    ],
+    "externalids": [
+        {
+            "id": "d5d5286d-50d2-4b07-97de-7407c62c21c0",
+            "inner_id": "2d9dc5ca-a4a2-11ed-b9df-0242ac120003",
+            "outer_id": "666",
+            "typeid_id": "d00ec0b6-f27c-497b-8fc8-ddb4e2460717"
+        }
+    ],
+    "externalidcategories": [
+        {
+            "id": "0ee3a92d-971f-499a-956f-ca6edb8d6094",
+            "name": "bez kategorie",
+            "name_en": "without category"
+        },
+        {
+            "id": "4061c96c-e1ed-4674-ba21-746cbd149dbf",
+            "name": "vědecké databáze",
+            "name_en": "science databases"
+        }
+    ],
+    "externalidtypes": [
+        {
+            "id": "53697b35-9f67-41e5-abed-04d7d4865cf2",
+            "name": "SCOPUS",
+            "name_en": "SCOPUS",
+            "urlformat": "https://scopus.com/%s",
+            "category_id": "4061c96c-e1ed-4674-ba21-746cbd149dbf"
+        },
+        {
+            "id": "d00ec0b6-f27c-497b-8fc8-ddb4e2460717",
+            "name": "VaV",
+            "name_en": "VaV",
+            "urlformat": "",
+            "category_id": "0ee3a92d-971f-499a-956f-ca6edb8d6094"
+        },
+        {
+            "id": "93a352ea-3bdb-47f5-a120-bcf3c6e44bbf",
+            "name": "UCO",
+            "name_en": "UCO",
+            "urlformat": "",
+            "category_id": "0ee3a92d-971f-499a-956f-ca6edb8d6094"
+        },
+        {
+            "id": "0c37b3e1-a937-4776-9543-37ae846411de",
+            "name": "UIC",
+            "name_en": "UIC",
+            "urlformat": "",
+            "category_id": "0ee3a92d-971f-499a-956f-ca6edb8d6094"
+        }
+    ],
+
     "groups": [
         {
             "id": "2d9dcd22-a4a2-11ed-b9df-0242ac120003",

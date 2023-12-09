@@ -1,8 +1,8 @@
 from functools import cache
 from gql_documents.DBDefinitions import (
-    ExternalIdTypeModel,
-    ExternalIdCategoryModel,
-    ExternalIdModel,
+    # ExternalIdTypeModel,
+    # ExternalIdCategoryModel,
+    # ExternalIdModel,
     DocumentModel,
     UserModel,
 )
@@ -49,11 +49,11 @@ async def initDB(asyncSessionMaker):
     dbModels = []
     if not (default == os.environ.get("DEMO", defaultNoDemo)):
         dbModels = [
-            ExternalIdCategoryModel,
-            ExternalIdTypeModel,
-            ExternalIdModel,
-            DocumentModel,
             UserModel,
+            # ExternalIdCategoryModel,
+            # ExternalIdTypeModel,
+            # ExternalIdModel,
+            DocumentModel,
         ]
 
     jsonData = get_demodata()

@@ -3,15 +3,15 @@ from sqlalchemy import Column, String
 
 
 def newUuidAsString():
-    return f"{uuid.uuid1()}"
+    return f"{uuid.uuid4()}"
 
 
 def UUIDColumn(name=None):
     if name is None:
-        return Column(String, primary_key=True, unique=True, default=newUuidAsString())
+        return Column(String, primary_key=True, unique=True, default=newUuidAsString)
     else:
         return Column(
-            name, String, primary_key=True, unique=True, default=newUuidAsString()
+            name, String, primary_key=True, unique=True, default=newUuidAsString
         )
 
 
