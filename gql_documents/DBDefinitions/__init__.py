@@ -7,12 +7,8 @@ from .Base import BaseModel
 # je-li treba, muzete definovat modely obsahujici jen id polozku, na ktere se budete odkazovat
 #
 ###########################################################################################################################
-
-# from .externalIdCategoryModel import ExternalIdCategoryModel
-# from .externalIdTypeModel import ExternalIdTypeModel
-# from .externalIdModel import ExternalIdModel
-from .userDBModel import UserModel
 from .documentDBModel import DocumentModel
+from .userDBModel import UserModel
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -54,7 +50,7 @@ def ComposeConnectionString():
     user = os.environ.get("POSTGRES_USER", "postgres")
     password = os.environ.get("POSTGRES_PASSWORD", "example")
     database = os.environ.get("POSTGRES_DB", "postgres")
-    hostWithPort = os.environ.get("POSTGRES_HOST", "localhost:5432")
+    hostWithPort = os.environ.get("POSTGRES_HOST", "host.docker.internal:5432")
 
     driver = "postgresql+asyncpg"  # "postgresql+psycopg2"
     connectionstring = f"{driver}://{user}:{password}@{hostWithPort}/{database}"

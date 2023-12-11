@@ -7,6 +7,7 @@ from gql_documents.DBDefinitions import (
     UserModel,
 )
 from sqlalchemy.future import select
+import uuid
 
 ###########################################################################################################################
 #
@@ -35,6 +36,15 @@ def get_demodata():
                         dateValueWOtzinfo = None
 
                 json_dict[key] = dateValueWOtzinfo
+
+            if (key in ["id", "changedby", "createdby", "dspace_id"]) or ("_id" in key):
+                if key == "outer_id":
+                    json_dict[key] = value
+                elif value not in ["", None]:
+                    json_dict[key] = uuid.UUID(value)
+                # else:
+                #    print(key, value)
+
         return json_dict
 
     with open("./systemdata.json", "r", encoding="utf-8") as f:
@@ -50,9 +60,6 @@ async def initDB(asyncSessionMaker):
     if not (default == os.environ.get("DEMO", defaultNoDemo)):
         dbModels = [
             UserModel,
-            # ExternalIdCategoryModel,
-            # ExternalIdTypeModel,
-            # ExternalIdModel,
             DocumentModel,
         ]
 

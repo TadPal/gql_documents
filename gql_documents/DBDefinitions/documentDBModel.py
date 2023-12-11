@@ -1,10 +1,5 @@
 import sqlalchemy
-from sqlalchemy import (
-    Column,
-    String,
-    DateTime,
-    ForeignKey,
-)
+from sqlalchemy import Column, String, DateTime, ForeignKey, Uuid
 from .UUID import UUIDColumn, UUIDFKey
 from .Base import BaseModel
 
@@ -13,7 +8,7 @@ class DocumentModel(BaseModel):
     __tablename__ = "documents"
 
     id = UUIDColumn()
-    dspace_id = Column(String, index=True)
+    dspace_id = Column(Uuid, index=True)
 
     name = Column(String)
     author = Column(ForeignKey("users.id"), index=True, nullable=True)
