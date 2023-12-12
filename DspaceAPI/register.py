@@ -1,35 +1,40 @@
 import requests
+import json
 
-def create_dspace_account(email, password, additional_info=None):
-    # DSpace backend registration endpoint (hypothetical example)
-    dspace_register_url = 'http://localhost:8080/rest/register'
+# Replace these values with your actual data
+base_url = "http://localhost:8080/server/api/core/bitstreamformats"
+bitstream_format_id = 6
+access_token = "eyJhbGciOiJIUzI1NiJ9.eyJlaWQiOiIzMzU2NDdiNi04YTUyLTRlY2ItYThjMS03ZWJhYmIxOTliZGEiLCJzZyI6W10sImF1dGhlbnRpY2F0aW9uTWV0aG9kIjoicGFzc3dvcmQiLCJleHAiOjE3MDEyOTMyNjh9.aksPpf1dAWZnW7RxUnQ-XyMofI39zpcdw1rupJCk2_U"
 
-    # Request parameters for account creation
-    registration_params = {
-        'email': email,
-        'password': password,
-        'additional_info': additional_info
-    }
+# URL for the specific bitstream format
+url = "http://localhost:8080/server/api/core/bitstreamformats/6"
 
-    try:
-        # Make a POST request to create a DSpace account
-        response = requests.post(dspace_register_url, data=registration_params)
+# Headers for the request
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {access_token}",
+}
 
-        # Check if the registration was successful (status code 200)
-        if response.status_code == 200:
-            # Print a success message
-            print("Account created successfully.")
-        else:
-            # Print an error message if the registration was not successful
-            print(f"Registration Error: {response.status_code}, {response.text}")
+# JSON payload for the update
+payload = {
+    "id": bitstream_format_id,
+    "shortDescription": "Text",
+    "description": "Plain Text H",
+    "mimetype": "text/plain",
+    "supportLevel": "KNOWN",
+    "internal": False,
+    "extensions": ["txt", "asc"],
+    "type": "bitstreamformat",
+}
 
-    except requests.RequestException as e:
-        # Handle request exceptions (e.g., network issues)
-        print(f"Request Exception: {e}")
+# Convert the payload to JSON
+json_payload = json.dumps(payload)
 
-# Example usage
-email = 'newuser@example.com'
-password = 'newpassword'
-additional_info = {'name': 'John Doe', 'age': 25}
+# Send the PUT request
+response = requests.put(url, headers=headers, data=json_payload)
 
-create_dspace_account(email, password, additional_info)
+# Check the response
+if response.status_code == 200:
+    print("Bitstream format updated successfully")
+else:
+    print(f"Error: {response.status_code}, {response.text}")
