@@ -184,7 +184,7 @@ async def document_insert(
     loader = getLoaders(info).documents
 
     result = DocumentResultGQLModel()
-    rows = await loader.filter_by(id=document.id)
+    rows = await loader.filter_by(id=document.dspace_id)
     row = next(rows, None)
 
     if row is None:

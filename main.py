@@ -46,16 +46,16 @@ async def RunOnceAndReturnSessionMaker():
     # kazde dalsi volani jen "vytahuje" tuto strukturu z pameti
     #
     ###########################################################################################################################
-    print(f'starting engine for "{connectionString}"')
+    print(f'Starting engine for "{connectionString}"')
 
     import os
 
-    makeDrop = os.environ.get("DEMO", "") == "true"
+    makeDrop = os.environ.get("MakeDrop", False)
     result = await startEngine(
         connectionstring=connectionString, makeDrop=makeDrop, makeUp=True
     )
 
-    print(f"initializing system structures")
+    print(f"Initializing system structures")
 
     ###########################################################################################################################
     #
@@ -70,7 +70,7 @@ async def RunOnceAndReturnSessionMaker():
     # )
     await initDB(result)
     ###########################################################################################################################
-    print(f"all done")
+    print(f"All done")
     return result
 
 
