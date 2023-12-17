@@ -2,7 +2,7 @@ import strawberry
 import datetime
 from typing import Union, Optional, List, Annotated
 import gql_documents.GraphTypeDefinitions
-
+from DspaceAPI.urls import healt_check, rest_test, rest_status, browses
 
 def getLoaders(info):
     return info.context["all"]
@@ -74,8 +74,26 @@ class DocumentGQLModel:
     def dspace_id(self) -> strawberry.ID:
         return self.dspace_id
     
-
+    @strawberry.field(description="""DSpace healt check""")
+    def healt_check_dspace(self) -> strawberry.ID:
+        result = healt_check
+        return result
     
+    @strawberry.field(description="""DSpace healt check""")
+    def rest_test_dspace(self) -> strawberry.ID:
+        result = rest_test
+        return result
+    
+    @strawberry.field(description="""DSpace healt check""")
+    def rest_status_dspace(self) -> strawberry.ID:
+        result = rest_status
+        return result
+    
+    @strawberry.field(description="""DSpace browses""")
+    def browses_dspace(self) -> strawberry.ID:
+        result = browses
+        return result
+      
 
 
 #####################################################################
