@@ -9,16 +9,14 @@ from sqlalchemy import (
 from .UUID import UUIDColumn, UUIDFKey
 from .Base import BaseModel
 
-
-class DocumentModel(BaseModel):
-    __tablename__ = "documents"
+class ExternalIdCategoryModel(BaseModel):
+    __tablename__ = "externalidcategories"
 
     id = UUIDColumn()
-    dspace_id = Column(String, index=True)
-
     name = Column(String)
-    author = UUIDFKey(nullable=True)
-    description = Column(String, comment="Brief description of the document")
+    name_en = Column(String)
 
     created = Column(DateTime, server_default=sqlalchemy.sql.func.now())
     lastchange = Column(DateTime, server_default=sqlalchemy.sql.func.now())
+    changedby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)
+    createdby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)

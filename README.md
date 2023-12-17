@@ -42,16 +42,3 @@ pytest --cov-report term-missing --cov=gql_documents tests
 
 Linux demo run:
 DEMO=true uvicorn main:app --reload
-
-# Zadani
-DOCUMENTS
-
-    integrujte obecné dokumenty (docx, pdf, …),
-    Vytvořte entitu DocumentGQLModel (včetně CRUD) 5 b
-    Zabezpečte možnost svázat dokumenty s uživatelem (UserGQLModel) (1:N) a se skupinou (GroupGQLModel) relace typu 1:N.
-    systémovou integraci tvořte s využitím DSPACE.
-    docker_compose s backend DSPACE, funkční systémová integrace 30 b.
-    návrh a ukázková implementace zprostředkované autentizace na DSpace 10 b.
-    Po konzultaci je možné realizovat API typu REST pomocí FastAPI.
-    Zabezpečte funkcionalitu pro ukládání a správu závěrečných prací studentů
-
