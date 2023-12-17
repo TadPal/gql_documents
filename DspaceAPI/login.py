@@ -1,42 +1,37 @@
 import requests
 
-# Your login data
-login_data = {
-    "user": "dspacedemo+admin@gmail.com",
-    "password": "dspace",
-    
+def dspace_login(email, password):
+    # DSpace backend login endpoint
+    dspace_login_url = 'http://localhost:8080/rest/login'
 
-}
+    # Request parameters for login
+    login_params = {'email': email, 'password': password}
 
-# CSRF token and cookie
-csrf_token = "a354740d-80b3-4cc8-af26-674ca5da76e2; klaro-57d0a99d-d0f0-44b2-937c-43291b8a8b1d"
-cookie = {"DSPACE-XSRF-COOKIE": "d5389e72-ea8f-4699-a0f7-0751b0d6e9b7"}
+    try:
+        # Make a POST request to login to the DSpace backend
+        response = requests.post(dspace_login_url, data=login_params)
 
-# Your login endpoint (corrected)
-login_url = "http://localhost:8080/server/api/authn/login"
+        # Check if the login was successful (status code 200)
+        if response.status_code == 200:
+            # Extract and return the JSESSIONID cookie from the response
+            return response.cookies.get('JSESSIONID')
+        else:
+            # Print an error message if the login was not successful
+            print(f"Login Error: {response.status_code}, {response.text}")
+            return "Login Error: {response.status_code}, {response.text}"
 
-# Make the login request
-response = requests.post(
-    login_url,
-    data=login_data,
-    headers={"X-XSRF-TOKEN": csrf_token},
-    cookies=cookie,
-)
+    except requests.RequestException as e:
+        # Handle request exceptions (e.g., network issues)
+        print(f"Request Exception: {e}")
+        return (f"Request Exception: {e}")
 
-# Check if login was successful
-if response.status_code == 200:
-    # Extract the bearer token from the response
-    bearer_token = response.headers.get("Authorization").replace("Bearer ", "")
+# Example usage
+email = 'test@dspace'
+password = 'pass'
 
-    # Use the bearer token in subsequent requests
-    headers = {"Authorization": f"Bearer {bearer_token}", "X-XSRF-TOKEN": csrf_token}
+jsessionid = dspace_login(email, password)
 
-    # Now you can make authenticated requests using the headers
-    # For example, let's check the status endpoint
-    status_url = "http://localhost:8080/rest/status"
-    status_response = requests.get(status_url, headers=headers)
-
-    print(f"Status response: {status_response.status_code}")
-    print(f"Status text: {status_response.text}")
+if jsessionid is not None:
+    print(f"Login successful. JSESSIONID: {jsessionid}")
 else:
-    print(f"Login Error: {response.status_code}, {response.text}")
+    print("Login failed.")

@@ -1,8 +1,8 @@
 import requests
 
-def check_dspace_health(dspace_health_url):
+def check_dspace_health():
     # DSpace backend health endpoint
-    #dspace_health_url = 'http://localhost:8080/server/actuator/health'
+    dspace_health_url = 'http://localhost:8080/rest/login'
 
     try:
         # Make a GET request to check the health of the DSpace backend
@@ -22,7 +22,7 @@ def check_dspace_health(dspace_health_url):
         print(f"Request Exception: {e}")
         return None
 
-#Example usage
+# Example usage
 # dspace_health_result = check_dspace_health()
 
 # if dspace_health_result is not None:
