@@ -6,6 +6,7 @@ gunicorn
 asyncpg
 aiohttp
 requests
+asyncio
 
 sqlalchemy
 sqlalchemy_utils
@@ -16,6 +17,6 @@ strawberry-graphql
 click
 aiodataloader
 pyjwt
-
+icecream
 
 https://github.com/hrbolek/uoishelpers/archive/refs/heads/main.zip
