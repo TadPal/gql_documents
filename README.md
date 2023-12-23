@@ -42,3 +42,25 @@ pytest --cov-report term-missing --cov=gql_documents tests
 
 Linux demo run:
 DEMO=true uvicorn main:app --reload
+
+# Run DSpace in Docker
+
+## Git clone DSpace/DSpace.git
+
+## To build DSpace images using code in your branch
+
+```
+docker-compose -f docker-compose.yml -f docker-compose-cli.yml build
+```
+
+## Run DSpace 7 REST and Angular from your branch
+
+```
+docker-compose -p d7 -f docker-compose.yml -f dspace/src/main/docker-compose/docker-compose-angular.yml up -d
+```
+
+## Create an admin account. By default, the dspace-cli container runs the dspace command.
+
+```
+docker-compose -p d7 -f docker-compose-cli.yml run --rm dspace-cli create-administrator -e test@test.edu -f admin -l user -p admin -c en
+```
