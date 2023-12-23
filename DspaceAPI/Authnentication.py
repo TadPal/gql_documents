@@ -18,22 +18,23 @@ async def login():
             }
             params_step2 = {"user": "test@test.edu", "password": "admin"}
 
-            async with session.post(url_step2, headers=headers_step2, data=params_step2) as response_step2:
-                bearer_token = response_step2.headers.get("Authorization")
+        async with session.post(url_step2, headers=headers_step2, data=params_step2) as response_step2:
+            bearer_token = response_step2.headers.get("Authorization")
 
-                # Step 3: Use Bearer token for authentication
-                url_step3 = "http://localhost:8080/server/api/authn/status"
-                headers_step3 = {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "Authorization": bearer_token,
-                }
+            # Step 3: Use Bearer token for authentication
+            url_step3 = "http://localhost:8080/server/api/authn/status"
+            headers_step3 = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": bearer_token,
+            }
+            print("Bearer token",bearer_token)
 
-                async with session.get(url_step3, headers=headers_step3) as response_step3:
-                    # Print the response for Step 3
-                    return await response_step3.text()
-                
+        async with session.get(url_step3, headers=headers_step3) as response_step3:
+            # Print the response for Step 3
+            return await response_step3.text()
+        
 
-# Run the asynchronous event loop
-import asyncio
-result = asyncio.run(login())
-print(result)
+
+# import asyncio
+# result = asyncio.run(login())
+# print(result)

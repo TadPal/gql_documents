@@ -1,7 +1,13 @@
 import asyncio
 from .Authnentication import login
+from .CreateWorkspaceItem import createWorkspaceItem
+from .AddItemTitle import addItemTitle
 from .UpdateItemTitle import updateItemTitle
+from .GetItem import getItem
 
-login = asyncio.run(login())
-updateItemTitle = asyncio.run(updateItemTitle())
 
+login = login
+createWorkspaceItem = createWorkspaceItem
+addItemTitle = addItemTitle
+updateItemTitle = updateItemTitle
+getItem = getItem

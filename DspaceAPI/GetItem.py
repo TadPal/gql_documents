@@ -2,9 +2,9 @@ import aiohttp
 import asyncio
 import json
 
-async def updateItemTitle(itemsId = "7e0025c3-ac61-4087-afbf-2f67940e86cd", titleName = ""):
+async def getItem(itemsId):
    
-    language = "cz"
+    language = "English_US"
     
     #JWT token
     async with aiohttp.ClientSession() as session:
@@ -29,10 +29,15 @@ async def updateItemTitle(itemsId = "7e0025c3-ac61-4087-afbf-2f67940e86cd", titl
 
             # Step 3: Access a new API endpoint to get specific XSRF token
             url_step3 = "http://localhost:8080/server/api/core/items/"+f"{itemsId}"
-            headers_step3 = {}
-            data_step3 = {} 
+            headers_step3 = {
+                "Content-Type": "application/json",
+                "Authorization": bearer_token,
+                "X-XSRF-TOKEN": xsrf_cookie,  # Use XSRF cookie from Step 3
+            }
 
-        async with session.patch(url_step3, headers=headers_step3, data=json.dumps(data_step3)) as response_step3:
+        async with session.get(url_step3, headers=headers_step3) as response_step3:
+            
+            return await response_step3.json()
             # Print the response for Step 3
             xsrf_cookie_step3 = response_step3.cookies.get("DSPACE-XSRF-COOKIE").value
 
@@ -45,7 +50,7 @@ async def updateItemTitle(itemsId = "7e0025c3-ac61-4087-afbf-2f67940e86cd", titl
             }
             data_step4 = [
                 { 
-                    "op": "replace", 
+                    "op": "add", 
                     "path": "/metadata/dc.title/0", 
                     "value": {"value":f"{titleName}","language":f"{language}"}}
             ]
@@ -56,5 +61,5 @@ async def updateItemTitle(itemsId = "7e0025c3-ac61-4087-afbf-2f67940e86cd", titl
 
 # Run the asynchronous event loop
 
-# result = asyncio.run(updateItemTitle())
+# result = asyncio.run(addItemTitle())
 # print(result)

@@ -2,9 +2,9 @@ import aiohttp
 import asyncio
 import json
 
-async def updateItemTitle(itemsId = "7e0025c3-ac61-4087-afbf-2f67940e86cd", titleName = ""):
+async def addItemTitle(itemsId, titleName):
    
-    language = "cz"
+    language = "English_US"
     
     #JWT token
     async with aiohttp.ClientSession() as session:
@@ -45,16 +45,16 @@ async def updateItemTitle(itemsId = "7e0025c3-ac61-4087-afbf-2f67940e86cd", titl
             }
             data_step4 = [
                 { 
-                    "op": "replace", 
+                    "op": "add", 
                     "path": "/metadata/dc.title/0", 
                     "value": {"value":f"{titleName}","language":f"{language}"}}
             ]
 
             async with session.patch(url_step4, headers=headers_step4, data=json.dumps(data_step4)) as response_step4:
                 # Print the response for Step 4
-                return await response_step4.text()
+                return await response_step4.json()
 
 # Run the asynchronous event loop
 
-# result = asyncio.run(updateItemTitle())
+# result = asyncio.run(addItemTitle())
 # print(result)
