@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 import json
 
-async def createWorkspaceItem(name = "", ):
+async def createWorkspaceItem():
 
     async with aiohttp.ClientSession() as session:
         # Step 1: Get XSRF token from cookie

@@ -38,27 +38,7 @@ async def getItem(itemsId):
         async with session.get(url_step3, headers=headers_step3) as response_step3:
             
             return await response_step3.json()
-            # Print the response for Step 3
-            xsrf_cookie_step3 = response_step3.cookies.get("DSPACE-XSRF-COOKIE").value
-
-            # Step 4: Another API endpoint using XSRF cookie from Step 3
-            url_step4 = "http://localhost:8080/server/api/core/items/"+f"{itemsId}"
-            headers_step4 = {
-                "Content-Type": "application/json",
-                "Authorization": bearer_token,
-                "X-XSRF-TOKEN": xsrf_cookie_step3,  # Use XSRF cookie from Step 3
-            }
-            data_step4 = [
-                { 
-                    "op": "add", 
-                    "path": "/metadata/dc.title/0", 
-                    "value": {"value":f"{titleName}","language":f"{language}"}}
-            ]
-
-            async with session.patch(url_step4, headers=headers_step4, data=json.dumps(data_step4)) as response_step4:
-                # Print the response for Step 4
-                return await response_step4.text()
-
+        
 # Run the asynchronous event loop
 
 # result = asyncio.run(addItemTitle())

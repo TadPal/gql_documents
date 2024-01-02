@@ -12,9 +12,10 @@ from DspaceAPI.Reguests import (
 )
 from icecream import ic
 import json
-from .documentDSPACEmodel import DocumentDSPACEModel
+
 def getLoaders(info):
     return info.context["all"]
+
 
 def getUser(info):
     return info.context["user"]
@@ -34,7 +35,7 @@ UserGQLModel = Annotated["UserGQLModel", strawberry.lazy(".externals")]
     keys=["id"],
     description="""Entity representing a document""",
 )
-class DocumentGQLModel:
+class DocumentDSPACEModel:
     @classmethod
     async def resolve_reference(cls, info: strawberry.types.Info, id: strawberry.ID):
         result = None
@@ -47,25 +48,29 @@ class DocumentGQLModel:
                 result.__strawberry_definition__ = (
                     cls._type_definition
                 )  # some version of strawberry changed :(
-        result.dspace = ""
+                    
         
         return result
 
     @strawberry.field(description="""Primary key""")
     def id(self) -> uuid.UUID:
-        return self.id
+        return self.get('id')
 
+    @strawberry.field(description="""Primary key""")
+    def uuid(self) -> uuid.UUID:
+        return self.get('uuid')
+    
     @strawberry.field(description="""Brief description""")
-    def description(self) -> Optional[str]:
-        return self.description
+    def metadata(self) -> Optional[str]:
+        return self.metadata
 
     @strawberry.field(description="""Document Name""")
     def name(self) -> str:
-        return self.name
+        return self.get('name')
 
     @strawberry.field(description="""Timestamp""")
-    def lastchange(self) -> datetime.datetime:
-        return self.lastchange
+    def bundles(self) -> datetime.datetime:
+        return self.bundles
 
     @strawberry.field(description="""Initial timestamp""")
     def created(self) -> datetime.datetime:
@@ -78,13 +83,56 @@ class DocumentGQLModel:
             id=self.author
         )
 
-    @strawberry.field(description="""DSpace id""")
-    def dspace_id(self) -> uuid.UUID:
-        return self.dspace_id
+  
+    
+    @strawberry.field(description="""DSpace item""")
+    def dspace_item(self) -> Optional[str]:
+        return self.dspace_item
+
+
+#####################################################################
+#
+# Special fields for query
+#
+#####################################################################
+@strawberry.field(description="""Rows of documents""")
+async def documents_page(
+    self,
+    info: strawberry.types.Info,
+    skip: Optional[int] = 0,
+    limit: Optional[int] = 100,
+) -> List[DocumentDSPACEModel]:
+    loader = getLoaders(info).documents
+    rows = await loader.page(skip=skip, limit=limit)
+
+    return rows
+
+
+@strawberry.field(description="""Returns document by id""")
+async def document_by_id(
+    self, info: strawberry.types.Info, id: uuid.UUID, dspaceID: uuid.UUID,
+) -> Optional[DocumentDSPACEModel]:
+    result = await DocumentDSPACEModel.resolve_reference(info, id)
+
+    result.dspace_item = await getItem(dspaceID)
+    
+    #ic(dspaceId)
+
+    return result
+
+
+#####################################################################
+#
+# Mutation section
+#
+#####################################################################
 
 
 @strawberry.input()
 class DocumentInsertGQLModel:
+    dspace_id: uuid.UUID = strawberry.field(
+        default=None, description="Primary key of dspace entity"
+    )
     description: Optional[str] = strawberry.field(
         default=None, description="Brief description of document"
     )
@@ -92,6 +140,7 @@ class DocumentInsertGQLModel:
     author: Optional[uuid.UUID] = strawberry.field(
         default=None, description="ID of Author"
     )
+
 
 @strawberry.input()
 class DocumentUpdateGQLModel:
@@ -105,10 +154,11 @@ class DocumentUpdateGQLModel:
     description: Optional[str] = strawberry.field(
         default=None, description="Brief description of document"
     )
-    name: str = strawberry.field(default="Name", description="Document name")
+    name: Optional[str] = strawberry.field(default="Name", description="Document name")
     author: Optional[uuid.UUID] = strawberry.field(
         default=None, description="ID of Author"
     )
+
 
 @strawberry.type()
 class DocumentResultGQLModel:
@@ -119,57 +169,12 @@ class DocumentResultGQLModel:
         default=None, description="""result of operation, should be "ok" or "fail" """
     )
 
-    dspace_response: str = strawberry.field(
-        default=None, description="""DSPACE response JSON to DICT"""
-    )
-    
     @strawberry.field(description="""Result of drone operation""")
     async def document(
         self, info: strawberry.types.Info
-    ) -> Union[DocumentGQLModel, None]:
-        result = await DocumentGQLModel.resolve_reference(info, self.id)
+    ) -> Union[DocumentDSPACEModel, None]:
+        result = await DocumentDSPACEModel.resolve_reference(info, self.id)
         return result
-
-#####################################################################
-#
-# Special fields for query
-#
-#####################################################################
-@strawberry.field(description="""Rows of documents""")
-async def documents_page(
-    self,
-    info: strawberry.types.Info,
-    skip: Optional[int] = 0,
-    limit: Optional[int] = 100,
-) -> List[DocumentGQLModel]:
-    loader = getLoaders(info).documents
-    rows = await loader.page(skip=skip, limit=limit)
-
-    return rows
-
-
-@strawberry.field(description="""Returns document by id""")
-async def document_by_id(
-    self, info: strawberry.types.Info, id: uuid.UUID
-) -> Optional[DocumentResultGQLModel]:
-    result = DocumentResultGQLModel()
-    result.id = id
-    
-    document = await DocumentGQLModel.resolve_reference(info, id)
-    
-    response_json = await getItem(document.dspace_id)
-    result.dspace_response = str(response_json)
-    
-    result.msg = "Test"
-    
-    return result
-
-
-#####################################################################
-#
-# Mutation section
-#
-#####################################################################
 
 
 @strawberry.mutation(description="Defines a new document")
@@ -179,12 +184,14 @@ async def document_insert(
     loader = getLoaders(info).documents
 
     # DSpace reguest to create an item and returns its uuid
-    dspaceID = await createWorkspaceItem()
+    dspaceID = await createWorkspaceItem(name=document.name)
     dspaceID = dspaceID.get("_embedded").get("item").get("uuid")
     document.dspace_id = dspaceID
 
     # DSPACE API reguest to add title and name it
     dspace_result = await addItemTitle(itemsId=dspaceID, titleName=document.name)
+    if dspace_result is not None:
+        print(dspace_result)
 
     result = DocumentResultGQLModel()
     rows = await loader.filter_by(id=document.dspace_id)
