@@ -1,5 +1,5 @@
 import asyncio
-from .Authnentication import login
+from .Authentication import login
 from .CreateWorkspaceItem import createWorkspaceItem
 from .AddItemTitle import addItemTitle
 from .UpdateItemTitle import updateItemTitle

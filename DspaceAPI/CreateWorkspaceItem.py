@@ -28,10 +28,12 @@ async def createWorkspaceItem():
                 bearer_token = response_step2.headers.get("Authorization")
                 xsrf_cookie = response_step2.cookies.get("DSPACE-XSRF-COOKIE").value
 
-                # Step 3: Access a new API endpoint
-                url_step3 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/submission/workspaceitems"
-                headers_step3 = {}
-                data_step3 = {}
+            # Step 3: Access a new API endpoint
+            url_step3 = (
+                f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/submission/workspaceitems"
+            )
+            headers_step3 = {}
+            data_step3 = {}
 
             async with session.post(
                 url_step3, headers=headers_step3, data=json.dumps(data_step3)
@@ -41,25 +43,27 @@ async def createWorkspaceItem():
                     "DSPACE-XSRF-COOKIE"
                 ).value
 
-                # Step 4: Another API endpoint using XSRF cookie from Step 3
-                url_step4 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/submission/workspaceitems"
-                headers_step4 = {
-                    "Content-Type": "application/json",
-                    "Authorization": bearer_token,
-                    "X-XSRF-TOKEN": xsrf_cookie_step3,  # Use XSRF cookie from Step 3
-                }
-                data_step4 = {}  # Your JSON request body here
+            # Step 4: Another API endpoint using XSRF cookie from Step 3
+            url_step4 = (
+                f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/submission/workspaceitems"
+            )
+            headers_step4 = {
+                "Content-Type": "application/json",
+                "Authorization": bearer_token,
+                "X-XSRF-TOKEN": xsrf_cookie_step3,  # Use XSRF cookie from Step 3
+            }
+            data_step4 = {}  # Your JSON request body here
 
-                async with session.post(
-                    url_step4, headers=headers_step4, data=json.dumps(data_step4)
-                ) as response_step4:
-                    # Print the response for Step 4
-                    return await response_step4.json()
+            async with session.post(
+                url_step4, headers=headers_step4, data=json.dumps(data_step4)
+            ) as response_step4:
+                # Print the response for Step 4
+                return await response_step4.json()
 
 
-# Run the asynchronous event loop
+# # Run the asynchronous event loop
 # result = asyncio.run(createWorkspaceItem())
-
+# print(result)
 # # Print the entire result dictionary
-# item = result.get('_embedded').get('item').get('uuid')
+# item = result.get("_embedded").get("item").get("uuid")
 # print(item)

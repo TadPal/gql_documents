@@ -101,9 +101,6 @@ class DocumentUpdateGQLModel:
     lastchange: datetime.datetime = strawberry.field(
         default=None, description="Timestamp"
     )
-    dspace_id: Optional[uuid.UUID] = strawberry.field(
-        default=None, description="Primary key of dspace entity"
-    )
     description: Optional[str] = strawberry.field(
         default=None, description="Brief description of document"
     )
@@ -181,17 +178,23 @@ async def document_insert(
     self, info: strawberry.types.Info, document: DocumentInsertGQLModel
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
+    result = DocumentResultGQLModel()
 
     # DSpace reguest to create an item and returns its uuid
     dspaceID = await createWorkspaceItem()
+    if dspaceID.get("status") != 200:
+        result.msg = dspaceID.get("message")
+        result.id = None
+
+        return result
+
     dspaceID = dspaceID.get("_embedded").get("item").get("uuid")
     document.dspace_id = dspaceID
 
     # DSPACE API reguest to add title and name it
     dspace_result = await addItemTitle(itemsId=dspaceID, titleName=document.name)
 
-    result = DocumentResultGQLModel()
-    rows = await loader.filter_by(id=document.dspace_id)
+    rows = await loader.filter_by(id=document.id)
     row = next(rows, None)
 
     if row is None:
@@ -214,8 +217,6 @@ async def document_update(
     dspace_result = await updateItemTitle(
         itemsId=document.dspace_id, titleName=document.name
     )
-    if dspace_result is not None:
-        print(dspace_result)
 
     result = DocumentResultGQLModel()
     row = await loader.update(document)
