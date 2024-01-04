@@ -3,6 +3,7 @@ import asyncio
 import json
 from .config import DSPACE_DOMAIN, DSPACE_PORT
 
+async def createWorkspaceItem():
 
 async def createWorkspaceItem(
     name="",
