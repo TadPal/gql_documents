@@ -1,8 +1,10 @@
 import aiohttp
+from .config import DSPACE_DOMAIN, DSPACE_PORT
+
 
 async def login():
     # Step 1: Get XSRF token from cookie
-    url_step1 = "http://localhost:8080/server/api/authn/status"
+    url_step1 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/authn/status"
     headers_step1 = {"Content-Type": "application/x-www-form-urlencoded"}
 
     async with aiohttp.ClientSession() as session:
@@ -11,28 +13,29 @@ async def login():
             print(f"XSRF Cookie: {xsrf_cookie}")
 
             # Step 2: Login and obtain Bearer token
-            url_step2 = "http://localhost:8080/server/api/authn/login"
+            url_step2 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/authn/login"
             headers_step2 = {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "X-XSRF-TOKEN": xsrf_cookie,
             }
             params_step2 = {"user": "test@test.edu", "password": "admin"}
 
-        async with session.post(url_step2, headers=headers_step2, data=params_step2) as response_step2:
+        async with session.post(
+            url_step2, headers=headers_step2, data=params_step2
+        ) as response_step2:
             bearer_token = response_step2.headers.get("Authorization")
 
             # Step 3: Use Bearer token for authentication
-            url_step3 = "http://localhost:8080/server/api/authn/status"
+            url_step3 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/authn/status"
             headers_step3 = {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": bearer_token,
             }
-            print("Bearer token",bearer_token)
+            print("Bearer token", bearer_token)
 
         async with session.get(url_step3, headers=headers_step3) as response_step3:
             # Print the response for Step 3
             return await response_step3.text()
-        
 
 
 # import asyncio

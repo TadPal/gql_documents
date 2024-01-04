@@ -1,7 +1,8 @@
 import requests
+from .config import DSPACE_DOMAIN, DSPACE_PORT
 
 # Step 1: Get XSRF token from cookie
-url_step1 = "http://localhost:8080/server/api/authn/status"
+url_step1 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/authn/status"
 headers_step1 = {"Content-Type": "application/x-www-form-urlencoded"}
 
 # Create a session to persist cookies
@@ -13,7 +14,7 @@ xsrf_cookie = session.cookies.get("DSPACE-XSRF-COOKIE")
 print(f"XSRF Cookie: {xsrf_cookie}")
 
 # Step 2: Login and obtain Bearer token
-url_step2 = "http://localhost:8080/server/api/authn/login"
+url_step2 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/authn/login"
 headers_step2 = {
     "Content-Type": "application/x-www-form-urlencoded",
     "X-XSRF-TOKEN": xsrf_cookie,
@@ -24,7 +25,7 @@ response_step2 = session.post(url_step2, headers=headers_step2, data=params_step
 bearer_token = response_step2.headers.get("Authorization")
 
 # Step 3: Use Bearer token for authentication
-url_step3 = "http://localhost:8080/server/api/authn/status"
+url_step3 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/authn/status"
 headers_step3 = {
     "Content-Type": "application/x-www-form-urlencoded",
     "Authorization": bearer_token,
