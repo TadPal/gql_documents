@@ -3,11 +3,8 @@ import asyncio
 import json
 from .config import DSPACE_DOMAIN, DSPACE_PORT
 
-async def createWorkspaceItem():
 
-async def createWorkspaceItem(
-    name="",
-):
+async def createWorkspaceItem():
     async with aiohttp.ClientSession() as session:
         # Step 1: Get XSRF token from cookie
         url_step1 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/authn/status"

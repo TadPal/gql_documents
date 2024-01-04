@@ -10,11 +10,11 @@ from DspaceAPI.Reguests import (
     updateItemTitle,
     getItem,
 )
-from icecream import ic
-import json
-from .documentDSPACEmodel import DocumentDSPACEModel
+
+
 def getLoaders(info):
     return info.context["all"]
+
 
 def getUser(info):
     return info.context["user"]
@@ -29,6 +29,7 @@ UserGQLModel = Annotated["UserGQLModel", strawberry.lazy(".externals")]
 # - venujte pozornost metode resolve reference, tato metoda je dulezita pro komunikaci mezi prvky federace,
 #
 ###########################################################################################################################
+
 
 @strawberry.federation.type(
     keys=["id"],
@@ -48,7 +49,7 @@ class DocumentGQLModel:
                     cls._type_definition
                 )  # some version of strawberry changed :(
         result.dspace = ""
-        
+
         return result
 
     @strawberry.field(description="""Primary key""")
@@ -93,6 +94,7 @@ class DocumentInsertGQLModel:
         default=None, description="ID of Author"
     )
 
+
 @strawberry.input()
 class DocumentUpdateGQLModel:
     id: uuid.UUID = strawberry.field(default=None, description="Primary key")
@@ -110,6 +112,7 @@ class DocumentUpdateGQLModel:
         default=None, description="ID of Author"
     )
 
+
 @strawberry.type()
 class DocumentResultGQLModel:
     id: Optional[uuid.UUID] = strawberry.field(
@@ -122,13 +125,14 @@ class DocumentResultGQLModel:
     dspace_response: str = strawberry.field(
         default=None, description="""DSPACE response JSON to DICT"""
     )
-    
+
     @strawberry.field(description="""Result of drone operation""")
     async def document(
         self, info: strawberry.types.Info
     ) -> Union[DocumentGQLModel, None]:
         result = await DocumentGQLModel.resolve_reference(info, self.id)
         return result
+
 
 #####################################################################
 #
@@ -154,14 +158,14 @@ async def document_by_id(
 ) -> Optional[DocumentResultGQLModel]:
     result = DocumentResultGQLModel()
     result.id = id
-    
+
     document = await DocumentGQLModel.resolve_reference(info, id)
-    
+
     response_json = await getItem(document.dspace_id)
     result.dspace_response = str(response_json)
-    
+
     result.msg = "Test"
-    
+
     return result
 
 
