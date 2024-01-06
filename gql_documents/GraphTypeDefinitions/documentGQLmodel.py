@@ -48,8 +48,6 @@ class DocumentGQLModel:
                 result.__strawberry_definition__ = (
                     cls._type_definition
                 )  # some version of strawberry changed :(
-        result.dspace = ""
-
         return result
 
     @strawberry.field(description="""Primary key""")
@@ -180,13 +178,15 @@ async def document_insert(
     loader = getLoaders(info).documents
     result = DocumentResultGQLModel()
 
+
     # DSpace reguest to create an item and returns its uuid
     dspaceID = await createWorkspaceItem()
-    if dspaceID.get("status") != 200:
-        result.msg = dspaceID.get("message")
-        result.id = None
+    
+    # if dspaceID.get("status") != 200:
+    #     result.msg = dspaceID.get("message")
+    #     result.id = None
 
-        return result
+    #     return result
 
     dspaceID = dspaceID.get("_embedded").get("item").get("uuid")
     document.dspace_id = dspaceID
@@ -194,9 +194,11 @@ async def document_insert(
     # DSPACE API reguest to add title and name it
     dspace_result = await addItemTitle(itemsId=dspaceID, titleName=document.name)
 
-    rows = await loader.filter_by(id=document.id)
+    #rows = await loader.filter_by(id=document.id)
+    #row = next(rows, None)
+    
+    rows = await loader.filter_by(id=document.dspace_id)
     row = next(rows, None)
-
     if row is None:
         row = await loader.insert(document)
         result.id = row.id
