@@ -9,6 +9,9 @@ from DspaceAPI.Reguests import (
     addItemTitle,
     updateItemTitle,
     getItem,
+    addBundleItem,
+    getBundleId,
+    addBitstreamsItem,
 )
 
 
@@ -178,7 +181,6 @@ async def document_insert(
     loader = getLoaders(info).documents
     result = DocumentResultGQLModel()
 
-
     # DSpace reguest to create an item and returns its uuid
     dspaceID = await createWorkspaceItem()
     
@@ -190,10 +192,16 @@ async def document_insert(
 
     dspaceID = dspaceID.get("_embedded").get("item").get("uuid")
     document.dspace_id = dspaceID
-
+    
     # DSPACE API reguest to add title and name it
     dspace_result = await addItemTitle(itemsId=dspaceID, titleName=document.name)
-
+    
+    dspace_bundle = await addBundleItem(itemsId=dspaceID)
+    dspace_bundle = dspace_bundle.get("uuid")
+    print("dspace bundle",dspace_bundle)
+    
+    
+    
     #rows = await loader.filter_by(id=document.id)
     #row = next(rows, None)
     
@@ -221,6 +229,29 @@ async def document_update(
     )
 
     result = DocumentResultGQLModel()
+    row = await loader.update(document)
+    if row is None:
+        result.id = None
+        result.msg = "fail"
+    else:
+        result.id = row.id
+        result.msg = "ok"
+
+    return result
+
+@strawberry.mutation(description="Add bitstream to dpsaceDoc")
+async def dspace_add_bitstreams(
+    self, info: strawberry.types.Info, document: DocumentUpdateGQLModel
+) -> DocumentResultGQLModel:
+    loader = getLoaders(info).documents
+    result = DocumentResultGQLModel()
+    
+    newDoc = await DocumentGQLModel.resolve_reference(info, document.id)
+
+    response_json = await getBundleId(newDoc.dspace_id)
+    bundlesId = response_json["_embedded"]["bundles"][0]["uuid"]
+    await addBitstreamsItem(bundlesId)
+    
     row = await loader.update(document)
     if row is None:
         result.id = None

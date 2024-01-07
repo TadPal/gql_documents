@@ -14,5 +14,9 @@ class Mutation:
     from .documentGQLmodel import document_delete
 
     document_delete = document_delete
+    
+    from .documentGQLmodel import dspace_add_bitstreams
+    
+    dspace_add_bitstreams = dspace_add_bitstreams
 
     pass
