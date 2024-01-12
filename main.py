@@ -1,8 +1,6 @@
 from typing import List
 import typing
-
 import asyncio
-
 from fastapi import FastAPI
 import strawberry
 from strawberry.fastapi import GraphQLRouter
@@ -76,7 +74,7 @@ async def RunOnceAndReturnSessionMaker():
 
 from strawberry.asgi import GraphQL
 
-from gql_documents.Dataloaders import createLoaders_3
+from gql_documents.Dataloaders import createLoaders
 
 
 class MyGraphQL(GraphQL):
@@ -105,7 +103,7 @@ class MyGraphQL(GraphQL):
             "session": self._session,
             "asyncSessionMaker": asyncSessionMaker,
             "user": self._user,
-            "all": await createLoaders_3(asyncSessionMaker),
+            "all": await createLoaders(asyncSessionMaker),
         }
 
 

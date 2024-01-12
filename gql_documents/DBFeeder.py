@@ -4,7 +4,6 @@ from gql_documents.DBDefinitions import (
     # ExternalIdCategoryModel,
     # ExternalIdModel,
     DocumentModel,
-    UserModel,
 )
 from sqlalchemy.future import select
 import uuid
@@ -59,7 +58,6 @@ async def initDB(asyncSessionMaker):
     dbModels = []
     if not (default == os.environ.get("DEMO", defaultNoDemo)):
         dbModels = [
-            UserModel,
             DocumentModel,
         ]
 

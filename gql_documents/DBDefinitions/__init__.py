@@ -8,7 +8,6 @@ from .Base import BaseModel
 #
 ###########################################################################################################################
 from .documentDBModel import DocumentModel
-from .userDBModel import UserModel
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

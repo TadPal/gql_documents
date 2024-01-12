@@ -11,7 +11,7 @@ class DocumentModel(BaseModel):
     dspace_id = Column(Uuid, index=True)
 
     name = Column(String)
-    author = Column(ForeignKey("users.id"), index=True, nullable=True)
+    author = Column(Uuid, index=True, nullable=True)
     description = Column(String, comment="Brief description of the document")
 
     created = Column(DateTime, server_default=sqlalchemy.sql.func.now())
