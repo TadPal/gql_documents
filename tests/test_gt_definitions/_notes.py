@@ -1,5 +1,3 @@
-
-
 # @pytest.fixture
 # def RSAKeys():
 #     from cryptography.hazmat.primitives.asymmetric import rsa
@@ -33,12 +31,12 @@
 
 # @pytest.fixture
 # def OAuthport():
-#     port = 8125
+#     port = 8000
 #     return port
 
 # @pytest.fixture
 # def Set_JWTRESOLVEUSERPATH(monkeypatch):
-#     port = 8125
+#     port = 8000
 #     monkeypatch.setenv("JWTRESOLVEUSERPATH", f"http://localhost:{port}/publickey")
 #     return port
 
@@ -68,7 +66,7 @@
 
 # def runFastApi(app, port):
 #     from multiprocessing import Process
-    
+
 #     _api_process = Process(target=runU, daemon=True, kwargs={"app": app, "port": port})
 #     _api_process.start()
 #     print(f"Server started at {port}")
@@ -82,13 +80,13 @@
 # @pytest.fixture
 # def OAuthServer(OAuthport, RSAKeys):
 #     from mockoauthserver import server as OAuthServer
-#     app = OAuthServer.createServer()    
+#     app = OAuthServer.createServer()
 #     runFastApi(app, OAuthport)
 
 
 # @pytest_asyncio.fixture
 # async def AccessToken(OAuthport, OAuthServer, LoggedUser):
-#     import aiohttp 
+#     import aiohttp
 #     userDict = LoggedUser
 #     # keyurl = f"http://localhost:{OAuthport}/publickey"
 #     loginurl = f"http://localhost:{OAuthport}/login3"
@@ -103,6 +101,5 @@
 #         async with session.post(loginurl, json=payload) as resp:
 #             assert resp.status == 200
 #             tokendict = await resp.json()
-            
-#     return tokendict["token"]
 
+#     return tokendict["token"]

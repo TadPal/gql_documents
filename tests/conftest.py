@@ -268,31 +268,31 @@ def NoRoleResponse(RoleTypes):
 
 
 @pytest.fixture
-def Env_GQLUG_ENDPOINT_URL_8123(monkeypatch):
-    monkeypatch.setenv("GQLUG_ENDPOINT_URL", "http://localhost:8123/gql")
+def Env_GQLUG_ENDPOINT_URL_8000(monkeypatch):
+    monkeypatch.setenv("GQLUG_ENDPOINT_URL", "http://localhost:8000/gql")
     GQLUG_ENDPOINT_URL = os.environ.get("GQLUG_ENDPOINT_URL", None)
     assert (
-        GQLUG_ENDPOINT_URL == "http://localhost:8123/gql"
+        GQLUG_ENDPOINT_URL == "http://localhost:8000/gql"
     ), "GQLUG_ENDPOINT_URL setup failed"
     print(f"Env GQLUG_ENDPOINT_URL set to {GQLUG_ENDPOINT_URL}")
-    yield ("GQLUG_ENDPOINT_URL", "http://localhost:8123/gql")
+    yield ("GQLUG_ENDPOINT_URL", "http://localhost:8000/gql")
     print(f"End of GQLUG_ENDPOINT_URL set to {GQLUG_ENDPOINT_URL}")
     return
 
 
 @pytest.fixture(autouse=True)  # allrole
-def Env_GQLUG_ENDPOINT_URL_8124(monkeypatch):
+def Env_GQLUG_ENDPOINT_URL_8001(monkeypatch):
     # print(40*"GQLUG")
-    monkeypatch.setenv("GQLUG_ENDPOINT_URL", "http://localhost:8124/gql")
+    monkeypatch.setenv("GQLUG_ENDPOINT_URL", "http://localhost:8000/gql")
     GQLUG_ENDPOINT_URL = os.environ.get("GQLUG_ENDPOINT_URL", None)
     assert (
-        GQLUG_ENDPOINT_URL == "http://localhost:8124/gql"
+        GQLUG_ENDPOINT_URL == "http://localhost:8000/gql"
     ), "GQLUG_ENDPOINT_URL setup failed"
     print(f"Env GQLUG_ENDPOINT_URL set to {GQLUG_ENDPOINT_URL}")
-    yield ("GQLUG_ENDPOINT_URL", "http://localhost:8124/gql")
+    yield ("GQLUG_ENDPOINT_URL", "http://localhost:8000/gql")
     print(f"End of GQLUG_ENDPOINT_URL set to {GQLUG_ENDPOINT_URL}")
     # print(40*"#")
-    return ("GQLUG_ENDPOINT_URL", "http://localhost:8124/gql")
+    return ("GQLUG_ENDPOINT_URL", "http://localhost:8000/gql")
 
 
 def run(port, response):
@@ -334,12 +334,12 @@ def runServer(port, response):
 
 @pytest.fixture(autouse=True, scope=serversTestscope)
 def NoRole_UG_Server(NoRoleResponse):
-    yield from runServer(port=8123, response=NoRoleResponse)
+    yield from runServer(port=8000, response=NoRoleResponse)
 
 
 @pytest.fixture(autouse=True, scope=serversTestscope)
 def AllRole_UG_Server(AllRoleResponse):
-    yield from runServer(port=8124, response=AllRoleResponse)
+    yield from runServer(port=8001, response=AllRoleResponse)
 
 
 def runOAuthServer(port):
@@ -397,7 +397,7 @@ def runOauth(port):
 
 @pytest.fixture(scope=serversTestscope)
 def OAuthport():
-    port = 8125
+    port = 8000
     return port
 
 
