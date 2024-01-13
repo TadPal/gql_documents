@@ -1,10 +1,9 @@
 import strawberry
 import datetime
 import uuid
-from typing import Union, Optional, List, Annotated, Any, Dict
+from typing import Union, Optional, List
 import gql_documents.GraphTypeDefinitions
 from DspaceAPI.Reguests import (
-    login,
     createWorkspaceItem,
     addItemTitle,
     updateItemTitle,
@@ -15,7 +14,7 @@ from DspaceAPI.Reguests import (
     getBitstreamItem,
     downloadItemContent,
 )
-from icecream import ic
+
 
 def getLoaders(info):
     return info.context["all"]
@@ -36,11 +35,13 @@ def getLoaders(info):
 )
 class DocumentGQLModel:
     @classmethod
-    async def resolve_reference(cls, info: strawberry.types.Info, id: strawberry.ID):
+    async def resolve_reference(cls, info: strawberry.types.Info, id: uuid.UUID):
         result = None
         if id is not None:
             loader = getLoaders(info=info).documents
-            print(loader, flush=True)
+            # print(loader, flush=True)
+            if isinstance(id, str):
+                id = uuid.UUID(id)
             result = await loader.load(id)
             if result is not None:
                 result._type_definition = cls._type_definition  # little hack :)
@@ -70,9 +71,9 @@ class DocumentGQLModel:
         return self.created
 
     @strawberry.field(description="""Author of the document""")
-    def author(self) -> uuid.UUID:
+    def author_id(self) -> uuid.UUID:
         # sync method which returns Awaitable :)
-        return self.author
+        return self.author_id
 
     @strawberry.field(description="""DSpace id""")
     def dspace_id(self) -> uuid.UUID:
@@ -85,7 +86,7 @@ class DocumentInsertGQLModel:
         default=None, description="Brief description of document"
     )
     name: str = strawberry.field(default="Name", description="Document name")
-    author: Optional[uuid.UUID] = strawberry.field(
+    author_id: Optional[uuid.UUID] = strawberry.field(
         default=None, description="ID of Author"
     )
 
@@ -100,7 +101,7 @@ class DocumentUpdateGQLModel:
         default=None, description="Brief description of document"
     )
     name: str = strawberry.field(default="Name", description="Document name")
-    author: Optional[uuid.UUID] = strawberry.field(
+    author_id: Optional[uuid.UUID] = strawberry.field(
         default=None, description="ID of Author"
     )
 
@@ -182,12 +183,6 @@ async def document_insert(
     # DSpace reguest to create an item and returns its uuid
     dspaceID = await createWorkspaceItem()
 
-    # if dspaceID.get("status") != 201:
-    #     result.msg = dspaceID.get("message")
-    #     result.id = None
-
-    #     return result
-
     dspaceID = dspaceID.get("_embedded").get("item").get("uuid")
     document.dspace_id = dspaceID
 
@@ -196,20 +191,14 @@ async def document_insert(
 
     dspace_bundle = await addBundleItem(itemsId=dspaceID)
     dspace_bundle = dspace_bundle.get("uuid")
-    print("dspace bundle", dspace_bundle)
 
-    # rows = await loader.filter_by(id=document.id)
-    # row = next(rows, None)
-
-    rows = await loader.filter_by(id=document.dspace_id)
-    row = next(rows, None)
+    row = await loader.insert(document)
     if row is None:
-        row = await loader.insert(document)
-        result.id = row.id
-        result.msg = "ok"
+        result.id = None
+        result.msg = "Fail"
     else:
         result.id = row.id
-        result.msg = "fail"
+        result.msg = "Ok"
     return result
 
 
@@ -259,16 +248,16 @@ async def dspace_add_bitstream(
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
     result = DocumentResultGQLModel()
-    
+
     document = await DocumentGQLModel.resolve_reference(info, document.id)
-    
-    #get budle id
+
+    # get budle id
     response_json = await getBundleId(document.dspace_id)
     bundlesId = response_json["_embedded"]["bundles"][0]["uuid"]
-    
-    #add bitstream to that bundle
+
+    # add bitstream to that bundle
     response_status = await addBitstreamsItem(bundlesId)
-    
+
     row = await loader.update(document)
     result.id = row.id
 
@@ -344,8 +333,8 @@ async def document_delete(
 
     if row is not None:
         row = await loader.delete(row.id)
-        result.msg = "ok"
+        result.msg = "Ok"
     else:
         result.id = None
-        result.msg = "fail"
+        result.msg = "Fail"
     return result
