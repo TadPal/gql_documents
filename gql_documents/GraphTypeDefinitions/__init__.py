@@ -1,5 +1,4 @@
 import strawberry
-from .externals import UserGQLModel
 
 
 ###########################################################################################################################
@@ -37,4 +36,4 @@ class Query:
     document_by_id = document_by_id
 
 
-schema = strawberry.federation.Schema(Query, types=(UserGQLModel,), mutation=Mutation)
+schema = strawberry.federation.Schema(query=Query, mutation=Mutation)

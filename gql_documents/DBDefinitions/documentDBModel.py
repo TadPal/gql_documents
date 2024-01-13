@@ -1,6 +1,6 @@
 import sqlalchemy
-from sqlalchemy import Column, String, DateTime, ForeignKey, Uuid
-from .UUID import UUIDColumn, UUIDFKey
+from sqlalchemy import Column, String, DateTime, Uuid
+from .UUID import UUIDColumn
 from .Base import BaseModel
 
 
@@ -11,7 +11,7 @@ class DocumentModel(BaseModel):
     dspace_id = Column(Uuid, index=True)
 
     name = Column(String)
-    author = Column(Uuid, index=True, nullable=True)
+    author_id = Column(Uuid, index=True, nullable=True)
     description = Column(String, comment="Brief description of the document")
 
     created = Column(DateTime, server_default=sqlalchemy.sql.func.now())
