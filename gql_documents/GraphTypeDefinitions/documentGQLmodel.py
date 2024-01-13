@@ -213,10 +213,8 @@ async def document_update(
         newName = document.name
         document = await DocumentGQLModel.resolve_reference(info, document.id)
         document.name = newName
-        response_status = await updateItemTitle(
-            document.dspace_id, newName
-        )
-        
+        response_status = await updateItemTitle(document.dspace_id, newName)
+
     # DSPACE API reguest to update description
     # if document.name != None:
     #     newName = document.name
@@ -225,19 +223,15 @@ async def document_update(
     #     response_status = await updateItemTitle(
     #         document.dspace_id, newName
     #     )
-        
-        
-        
-        
 
     result = DocumentResultGQLModel()
     row = await loader.update(document)
     if row is None:
         result.id = None
-        result.msg = f"fail, {response_status}"
+        result.msg = "Fail"
     else:
         result.id = row.id
-        result.msg = f"ok, {response_status}"
+        result.msg = "Ok"
 
     return result
 
@@ -259,25 +253,25 @@ async def dspace_add_bitstream(
     response_status = await addBitstreamsItem(bundlesId)
 
     row = await loader.update(document)
-    result.id = row.id
+    result.id = None
 
     if response_status == 201:
-        result.msg = "ok"
-        
+        result.msg = "Ok"
+        result.id = row.id
+
     elif response_status == 400:
         result.msg = "Bad Request"
-        
+
     elif response_status == 401:
         result.msg = "Unauthorized"
-    
+
     elif response_status == 403:
         result.msg = "Forbidden"
 
     elif response_status == 404:
-            result.msg = "Not found"
+        result.msg = "Not found"
 
     return result
-
 
 
 @strawberry.mutation(description="Get bitstream from dpsace")
@@ -286,41 +280,40 @@ async def dspace_get_bitstream(
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
     result = DocumentResultGQLModel()
-    
+
     document = await DocumentGQLModel.resolve_reference(info, document.id)
-    
-    
-    #get budle id WARNING: HARDCODED [0] its a list!
+
+    # get budle id WARNING: HARDCODED [0] its a list!
     response_json = await getBundleId(document.dspace_id)
     bundlesId = response_json["_embedded"]["bundles"][0]["uuid"]
-    
-    
+
     response_json = await getBitstreamItem(bundlesId)
     bitstreamId = response_json["_embedded"]["bitstreams"][0]["uuid"]
     bitstreamName = response_json["_embedded"]["bitstreams"][0]["name"]
 
-
-    #add bitstream to that bundle
+    # add bitstream to that bundle
     response_status = await downloadItemContent(bitstreamId, bitstreamName)
 
     row = await loader.update(document)
-    
-    result.id = row.id
+    result.id = None
+
     if response_status == 200:
-        result.msg = "ok"
-            
+        result.msg = "Ok"
+        result.id = row.id
+
     elif response_status == 204:
         result.msg = "No Content"
-        
+
     elif response_status == 401:
         result.msg = "Unauthorized"
-    
+
     elif response_status == 403:
         result.msg = "Forbidden"
 
     elif response_status == 404:
         result.msg = "Not found"
     return result
+
 
 @strawberry.mutation(description="Deletes a document")
 async def document_delete(
