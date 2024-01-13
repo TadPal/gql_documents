@@ -13,7 +13,7 @@ from DspaceAPI.Reguests import (
     getBundleId,
     addBitstreamsItem,
 )
-
+from icecream import ic
 
 def getLoaders(info):
     return info.context["all"]
@@ -240,23 +240,35 @@ async def dspace_add_bitstreams(
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
     result = DocumentResultGQLModel()
-
-    newDoc = await DocumentGQLModel.resolve_reference(info, document.id)
-
-    response_json = await getBundleId(newDoc.dspace_id)
+    
+    document = await DocumentGQLModel.resolve_reference(info, document.id)
+    
+    #get budle id
+    response_json = await getBundleId(document.dspace_id)
     bundlesId = response_json["_embedded"]["bundles"][0]["uuid"]
-    await addBitstreamsItem(bundlesId)
-
+    
+    #add bitstream to that bundle
+    response_status = await addBitstreamsItem(bundlesId)
+    
     row = await loader.update(document)
-    if row is None:
-        result.id = None
-        result.msg = "fail"
-    else:
-        result.id = row.id
+    result.id = row.id
+
+    if response_status is 201:
         result.msg = "ok"
+        
+    elif response_status is 400:
+        result.msg = "Bad Request"
+        
+    elif response_status is 401:
+        result.msg = "Unauthorized"
+    
+    elif response_status is 403:
+        result.msg = "Forbidden"
+
+    elif response_status is 404:
+            result.msg = "Not found"
 
     return result
-
 
 @strawberry.mutation(description="Deletes a document")
 async def document_delete(
