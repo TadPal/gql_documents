@@ -1,4 +1,4 @@
-from uoishelpers.dataloaders import createIdLoader, createFkeyLoader
+from uoishelpers.dataloaders import createIdLoader
 from functools import cache
 
 from gql_documents.DBDefinitions import (

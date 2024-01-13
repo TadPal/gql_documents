@@ -36,7 +36,7 @@ def get_demodata():
 
                 json_dict[key] = dateValueWOtzinfo
 
-            if (key in ["id", "changedby", "createdby", "dspace_id"]) or ("_id" in key):
+            if (key in ["id", "changedby", "createdby"]) or ("_id" in key):
                 if key == "outer_id":
                     json_dict[key] = value
                 elif value not in ["", None]:
