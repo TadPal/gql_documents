@@ -4,7 +4,7 @@ import json
 from .config import DSPACE_PORT, DSPACE_DOMAIN
 
 
-async def getBitstreamItem(bundleId="237700b0-a025-48a9-9979-fc191d4d7412"):
+async def getBitstreamItem(bundleId):
 
     # JWT token
     async with aiohttp.ClientSession() as session:

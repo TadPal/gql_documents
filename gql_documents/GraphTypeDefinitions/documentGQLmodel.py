@@ -276,7 +276,7 @@ async def document_update(
 
 @strawberry.mutation(description="Add bitstream to dpsace")
 async def dspace_add_bitstream(
-    self, info: strawberry.types.Info, document: DocumentUpdateGQLModel
+    self, info: strawberry.types.Info, document: DocumentUpdateGQLModel, filename: str
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
     result = DocumentResultGQLModel()
@@ -285,10 +285,10 @@ async def dspace_add_bitstream(
 
     # get budle id
     response_json = await getBundleId(document.dspace_id)
-    bundlesId = response_json["_embedded"]["bundles"][0]["uuid"]
+    bundleId = response_json["_embedded"]["bundles"][0]["uuid"]
 
     # add bitstream to that bundle
-    response_status = await addBitstreamsItem(bundlesId)
+    response_status = await addBitstreamsItem(bundleId = bundleId, filename = filename)
 
     row = await loader.update(document)
     result.id = None
