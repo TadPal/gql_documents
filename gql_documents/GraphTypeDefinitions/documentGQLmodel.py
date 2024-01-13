@@ -166,6 +166,44 @@ async def document_by_id(
     return result
 
 
+@strawberry.field(description="Get bitstream from dpsace")
+async def dspace_get_bitstream(
+    self, info: strawberry.types.Info, id: uuid.UUID
+) -> Optional[DocumentResultGQLModel]:
+    result = DocumentResultGQLModel()
+    document = await DocumentGQLModel.resolve_reference(info, id)
+
+    # get budle id WARNING: HARDCODED [0] its a list!
+    response_json = await getBundleId(document.dspace_id)
+    bundlesId = response_json["_embedded"]["bundles"][0]["uuid"]
+
+    response_json = await getBitstreamItem(bundlesId)
+    bitstreamId = response_json["_embedded"]["bitstreams"][0]["uuid"]
+    bitstreamName = response_json["_embedded"]["bitstreams"][0]["name"]
+
+    # add bitstream to that bundle
+    response_status = await downloadItemContent(bitstreamId, bitstreamName)
+    result.id = None
+
+    if response_status == 200:
+        result.msg = "Ok"
+        result.id = id
+
+    elif response_status == 204:
+        result.msg = "No Content"
+
+    elif response_status == 401:
+        result.msg = "Unauthorized"
+
+    elif response_status == 403:
+        result.msg = "Forbidden"
+
+    elif response_status == 404:
+        result.msg = "Not found"
+
+    return result
+
+
 #####################################################################
 #
 # Mutation section
@@ -271,47 +309,6 @@ async def dspace_add_bitstream(
     elif response_status == 404:
         result.msg = "Not found"
 
-    return result
-
-
-@strawberry.mutation(description="Get bitstream from dpsace")
-async def dspace_get_bitstream(
-    self, info: strawberry.types.Info, document: DocumentUpdateGQLModel
-) -> DocumentResultGQLModel:
-    loader = getLoaders(info).documents
-    result = DocumentResultGQLModel()
-
-    document = await DocumentGQLModel.resolve_reference(info, document.id)
-
-    # get budle id WARNING: HARDCODED [0] its a list!
-    response_json = await getBundleId(document.dspace_id)
-    bundlesId = response_json["_embedded"]["bundles"][0]["uuid"]
-
-    response_json = await getBitstreamItem(bundlesId)
-    bitstreamId = response_json["_embedded"]["bitstreams"][0]["uuid"]
-    bitstreamName = response_json["_embedded"]["bitstreams"][0]["name"]
-
-    # add bitstream to that bundle
-    response_status = await downloadItemContent(bitstreamId, bitstreamName)
-
-    row = await loader.update(document)
-    result.id = None
-
-    if response_status == 200:
-        result.msg = "Ok"
-        result.id = row.id
-
-    elif response_status == 204:
-        result.msg = "No Content"
-
-    elif response_status == 401:
-        result.msg = "Unauthorized"
-
-    elif response_status == 403:
-        result.msg = "Forbidden"
-
-    elif response_status == 404:
-        result.msg = "Not found"
     return result
 
 

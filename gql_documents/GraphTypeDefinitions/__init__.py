@@ -22,18 +22,15 @@ class Mutation:
     document_update = document_update
     document_delete = document_delete
     dspace_add_bitstream = dspace_add_bitstream
-    dspace_get_bitstream = dspace_get_bitstream
 
 
 @strawberry.type(description="""Type for query root""")
 class Query:
-    from .documentGQLmodel import (
-        documents_page,
-        document_by_id,
-    )
+    from .documentGQLmodel import documents_page, document_by_id, dspace_get_bitstream
 
     documents_page = documents_page
     document_by_id = document_by_id
+    dspace_get_bitstream = dspace_get_bitstream
 
 
 schema = strawberry.federation.Schema(query=Query, mutation=Mutation)
