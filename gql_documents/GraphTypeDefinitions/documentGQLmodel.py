@@ -12,6 +12,8 @@ from DspaceAPI.Reguests import (
     addBundleItem,
     getBundleId,
     addBitstreamsItem,
+    getBitstreamItem,
+    downloadItemContent,
 )
 from icecream import ic
 
@@ -217,25 +219,42 @@ async def document_update(
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
 
-    # DSPACE API reguest to update item title
-    dspace_result = await updateItemTitle(
-        itemsId=document.dspace_id, titleName=document.name
-    )
+    # DSPACE API reguest to update item name/title
+    if document.name != None:
+        newName = document.name
+        document = await DocumentGQLModel.resolve_reference(info, document.id)
+        document.name = newName
+        response_status = await updateItemTitle(
+            document.dspace_id, newName
+        )
+        
+    # DSPACE API reguest to update description
+    # if document.name != None:
+    #     newName = document.name
+    #     document = await DocumentGQLModel.resolve_reference(info, document.id)
+    #     document.name = newName
+    #     response_status = await updateItemTitle(
+    #         document.dspace_id, newName
+    #     )
+        
+        
+        
+        
 
     result = DocumentResultGQLModel()
     row = await loader.update(document)
     if row is None:
         result.id = None
-        result.msg = "fail"
+        result.msg = f"fail, {response_status}"
     else:
         result.id = row.id
-        result.msg = "ok"
+        result.msg = f"ok, {response_status}"
 
     return result
 
 
-@strawberry.mutation(description="Add bitstream to dpsaceDoc")
-async def dspace_add_bitstreams(
+@strawberry.mutation(description="Add bitstream to dpsace")
+async def dspace_add_bitstream(
     self, info: strawberry.types.Info, document: DocumentUpdateGQLModel
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
@@ -253,21 +272,65 @@ async def dspace_add_bitstreams(
     row = await loader.update(document)
     result.id = row.id
 
-    if response_status is 201:
+    if response_status == 201:
         result.msg = "ok"
         
-    elif response_status is 400:
+    elif response_status == 400:
         result.msg = "Bad Request"
         
-    elif response_status is 401:
+    elif response_status == 401:
         result.msg = "Unauthorized"
     
-    elif response_status is 403:
+    elif response_status == 403:
         result.msg = "Forbidden"
 
-    elif response_status is 404:
+    elif response_status == 404:
             result.msg = "Not found"
 
+    return result
+
+
+
+@strawberry.mutation(description="Get bitstream from dpsace")
+async def dspace_get_bitstream(
+    self, info: strawberry.types.Info, document: DocumentUpdateGQLModel
+) -> DocumentResultGQLModel:
+    loader = getLoaders(info).documents
+    result = DocumentResultGQLModel()
+    
+    document = await DocumentGQLModel.resolve_reference(info, document.id)
+    
+    
+    #get budle id WARNING: HARDCODED [0] its a list!
+    response_json = await getBundleId(document.dspace_id)
+    bundlesId = response_json["_embedded"]["bundles"][0]["uuid"]
+    
+    
+    response_json = await getBitstreamItem(bundlesId)
+    bitstreamId = response_json["_embedded"]["bitstreams"][0]["uuid"]
+    bitstreamName = response_json["_embedded"]["bitstreams"][0]["name"]
+
+
+    #add bitstream to that bundle
+    response_status = await downloadItemContent(bitstreamId, bitstreamName)
+
+    row = await loader.update(document)
+    
+    result.id = row.id
+    if response_status == 200:
+        result.msg = "ok"
+            
+    elif response_status == 204:
+        result.msg = "No Content"
+        
+    elif response_status == 401:
+        result.msg = "Unauthorized"
+    
+    elif response_status == 403:
+        result.msg = "Forbidden"
+
+    elif response_status == 404:
+        result.msg = "Not found"
     return result
 
 @strawberry.mutation(description="Deletes a document")

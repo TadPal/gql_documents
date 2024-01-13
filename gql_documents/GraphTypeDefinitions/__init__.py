@@ -15,13 +15,15 @@ class Mutation:
         document_insert,
         document_update,
         document_delete,
-        dspace_add_bitstreams,
+        dspace_add_bitstream,
+        dspace_get_bitstream,
     )
 
     document_insert = document_insert
     document_update = document_update
     document_delete = document_delete
-    dspace_add_bitstreams = dspace_add_bitstreams
+    dspace_add_bitstream = dspace_add_bitstream
+    dspace_get_bitstream = dspace_get_bitstream
 
 
 @strawberry.type(description="""Type for query root""")
