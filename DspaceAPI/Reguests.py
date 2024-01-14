@@ -1,8 +1,8 @@
 import asyncio
 from .Authentication import login
 from .CreateWorkspaceItem import createWorkspaceItem
-from .AddItemTitle import addItemTitle
-from .UpdateItemTitle import updateItemTitle
+from .AddTitleItem import addTitleItem
+from .UpdateTitleItem import updateTitleItem
 from .GetItem import getItem
 from .AddBundleItem import addBundleItem
 from .GetBundleId import getBundleId
@@ -10,14 +10,18 @@ from .AddBitstreamsItem import addBitstreamsItem
 from .GetBitstreamItem import getBitstreamItem
 from .GetBitstreamItem import getBitstreamItem
 from .GetContentItem import downloadItemContent
+from .UpdateDescriptionItem import updateDescriptionItem
+from .AddDescriptionItem import addDescriptionItem
 
 login = login
 createWorkspaceItem = createWorkspaceItem
-addItemTitle = addItemTitle
-updateItemTitle = updateItemTitle
+addTitleItem = addTitleItem
+updateTitleItem = updateTitleItem
 getItem = getItem
 addBundleItem = addBundleItem  #nessecary to adding bitstreams 
 getBundleId = getBundleId
 addBitstreamsItem = addBitstreamsItem
 getBitstreamItem = getBitstreamItem
 downloadItemContent = downloadItemContent
+updateDescriptionItem = updateDescriptionItem
+addDescriptionItem = addDescriptionItem

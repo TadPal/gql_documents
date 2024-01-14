@@ -4,8 +4,7 @@ import json
 from .config import DSPACE_PORT, DSPACE_DOMAIN
 
 
-async def getItem(itemsId):
-    language = "English_US"
+async def addTitleItem(itemsId, titleName, language="cz"):
 
     # JWT token
     async with aiohttp.ClientSession() as session:
@@ -32,14 +31,35 @@ async def getItem(itemsId):
 
             # Step 3: Access a new API endpoint to get specific XSRF token
             url_step3 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/core/items/{itemsId}"
-            headers_step3 = {
+            headers_step3 = {}
+            data_step3 = {}
+
+        async with session.patch(
+            url_step3, headers=headers_step3, data=json.dumps(data_step3)
+        ) as response_step3:
+            # Print the response for Step 3
+            xsrf_cookie_step3 = response_step3.cookies.get("DSPACE-XSRF-COOKIE").value
+
+            # Step 4: Another API endpoint using XSRF cookie from Step 3
+            url_step4 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/core/items/{itemsId}"
+            headers_step4 = {
                 "Content-Type": "application/json",
                 "Authorization": bearer_token,
-                "X-XSRF-TOKEN": xsrf_cookie,  # Use XSRF cookie from Step 3
+                "X-XSRF-TOKEN": xsrf_cookie_step3,  # Use XSRF cookie from Step 3
             }
+            data_step4 = [
+                {
+                    "op": "add",
+                    "path": "/metadata/dc.title/0",
+                    "value": {"value": f"{titleName}", "language": f"{language}"},
+                }
+            ]
 
-        async with session.get(url_step3, headers=headers_step3) as response_step3:
-            return await response_step3.json()
+            async with session.patch(
+                url_step4, headers=headers_step4, data=json.dumps(data_step4)
+            ) as response_step4:
+                # Print the response for Step 4
+                return await response_step4.json()
 
 
 # Run the asynchronous event loop

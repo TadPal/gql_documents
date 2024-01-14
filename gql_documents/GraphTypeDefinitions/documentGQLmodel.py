@@ -5,14 +5,16 @@ from typing import Union, Optional, List
 import gql_documents.GraphTypeDefinitions
 from DspaceAPI.Reguests import (
     createWorkspaceItem,
-    addItemTitle,
-    updateItemTitle,
+    addTitleItem,
+    updateTitleItem,
     getItem,
     addBundleItem,
     getBundleId,
     addBitstreamsItem,
     getBitstreamItem,
     downloadItemContent,
+    updateDescriptionItem,
+    addDescriptionItem,
 )
 
 
@@ -100,7 +102,7 @@ class DocumentUpdateGQLModel:
     description: Optional[str] = strawberry.field(
         default=None, description="Brief description of document"
     )
-    name: str = strawberry.field(default="Name", description="Document name")
+    name: Optional[str] = strawberry.field(default=None, description="Document name")
     author_id: Optional[uuid.UUID] = strawberry.field(
         default=None, description="ID of Author"
     )
@@ -225,7 +227,10 @@ async def document_insert(
     document.dspace_id = dspaceID
 
     # DSPACE API reguest to add title and name it
-    dspace_result = await addItemTitle(itemsId=dspaceID, titleName=document.name)
+
+    dspace_result = await addTitleItem(itemsId=dspaceID, titleName=document.name)
+    dspace_result = await addDescriptionItem(itemsId=dspaceID, description=document.description)
+    
 
     dspace_bundle = await addBundleItem(itemsId=dspaceID)
     dspace_bundle = dspace_bundle.get("uuid")
@@ -246,21 +251,24 @@ async def document_update(
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
 
+    
+    newName = document.name
+    newDescription = document.description
+    
+    document = await DocumentGQLModel.resolve_reference(info, document.id)
+          
     # DSPACE API reguest to update item name/title
-    if document.name != None:
-        newName = document.name
-        document = await DocumentGQLModel.resolve_reference(info, document.id)
+    if newName != None:
         document.name = newName
-        response_status = await updateItemTitle(document.dspace_id, newName)
+        response_status = await updateTitleItem(document.dspace_id, newName)
 
     # DSPACE API reguest to update description
-    # if document.name != None:
-    #     newName = document.name
-    #     document = await DocumentGQLModel.resolve_reference(info, document.id)
-    #     document.name = newName
-    #     response_status = await updateItemTitle(
-    #         document.dspace_id, newName
-    #     )
+    if newDescription != None:
+        document.description = newDescription
+        response_status = await updateDescriptionItem(
+            document.dspace_id, newDescription
+        )
+        
 
     result = DocumentResultGQLModel()
     row = await loader.update(document)

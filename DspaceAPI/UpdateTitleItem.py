@@ -4,8 +4,8 @@ import json
 from .config import DSPACE_PORT, DSPACE_DOMAIN
 
 
-async def addItemTitle(itemsId, titleName):
-    language = "English_US"
+async def updateTitleItem(itemsId, titleName):
+    language = "cz"
 
     # JWT token
     async with aiohttp.ClientSession() as session:
@@ -50,7 +50,7 @@ async def addItemTitle(itemsId, titleName):
             }
             data_step4 = [
                 {
-                    "op": "add",
+                    "op": "replace",
                     "path": "/metadata/dc.title/0",
                     "value": {"value": f"{titleName}", "language": f"{language}"},
                 }
@@ -60,10 +60,10 @@ async def addItemTitle(itemsId, titleName):
                 url_step4, headers=headers_step4, data=json.dumps(data_step4)
             ) as response_step4:
                 # Print the response for Step 4
-                return await response_step4.json()
+                return response_step4.status
 
 
 # Run the asynchronous event loop
 
-# result = asyncio.run(addItemTitle())
+# result = asyncio.run(updateTitleItem())
 # print(result)
