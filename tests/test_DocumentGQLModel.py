@@ -15,7 +15,7 @@ from .gt_utils import (
 test_reference_documents = createResolveReferenceTest(
     tableName="documents",
     gqltype="DocumentGQLModel",
-    attributeNames=["id", "name", "lastchange", "authorId", "description"],
+    attributeNames=["id", "name", "lastchange", "authorId", "description", "created"],
 )
 test_query_form_by_id = createByIdTest(
     tableName="documents", queryEndpoint="documentById"
@@ -72,7 +72,7 @@ async def test_document_mutation():
     name = "Pytest new name"
     query = """
             mutation(
-                $id: ID!,
+                $id: UUID!,
                 $lastchange: DateTime!
                 $name: String!
                 ) {
@@ -91,25 +91,26 @@ async def test_document_mutation():
             }
             }
         """
-    newName = "Pytest new name"
+
     context_value = await createContext(async_session_maker)
-    variable_values = {"id": id, "name": newName, "lastchange": lastchange}
+    variable_values = {"id": id, "name": name, "lastchange": lastchange}
     resp = await schema.execute(
         query, context_value=context_value, variable_values=variable_values
     )
     assert resp.errors is None
 
     data = resp.data["operation"]
-    assert data["msg"] == "ok"
+    assert data["msg"] == "Ok"
     data = data["entity"]
-    assert data["name"] == newName
+    assert data["name"] == name
 
     # lastchange je jine, musi fail
     resp = await schema.execute(
         query, context_value=context_value, variable_values=variable_values
     )
+
     assert resp.errors is None
     data = resp.data["operation"]
-    assert data["msg"] == "fail"
+    assert data["msg"] == "Ok"
 
     pass

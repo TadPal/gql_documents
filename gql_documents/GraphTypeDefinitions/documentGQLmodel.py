@@ -224,13 +224,16 @@ async def document_insert(
     dspaceID = await createWorkspaceItem()
 
     dspaceID = dspaceID.get("_embedded").get("item").get("uuid")
+    if isinstance(dspaceID, str):
+        dspaceID = uuid.UUID(dspaceID)
     document.dspace_id = dspaceID
 
     # DSPACE API reguest to add title and name it
 
     dspace_result = await addTitleItem(itemsId=dspaceID, titleName=document.name)
-    dspace_result = await addDescriptionItem(itemsId=dspaceID, description=document.description)
-    
+    dspace_result = await addDescriptionItem(
+        itemsId=dspaceID, description=document.description
+    )
 
     dspace_bundle = await addBundleItem(itemsId=dspaceID)
     dspace_bundle = dspace_bundle.get("uuid")
@@ -251,12 +254,11 @@ async def document_update(
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
 
-    
     newName = document.name
     newDescription = document.description
-    
+
     document = await DocumentGQLModel.resolve_reference(info, document.id)
-          
+
     # DSPACE API reguest to update item name/title
     if newName != None:
         document.name = newName
@@ -268,7 +270,6 @@ async def document_update(
         response_status = await updateDescriptionItem(
             document.dspace_id, newDescription
         )
-        
 
     result = DocumentResultGQLModel()
     row = await loader.update(document)
@@ -296,7 +297,7 @@ async def dspace_add_bitstream(
     bundleId = response_json["_embedded"]["bundles"][0]["uuid"]
 
     # add bitstream to that bundle
-    response_status = await addBitstreamsItem(bundleId = bundleId, filename = filename)
+    response_status = await addBitstreamsItem(bundleId=bundleId, filename=filename)
 
     row = await loader.update(document)
     result.id = None
