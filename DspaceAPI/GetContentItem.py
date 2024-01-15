@@ -57,7 +57,7 @@ async def downloadItemContent(bitstreamId, bitstreamName, filePath=""):
                     counter = 0
                     while os.path.exists(bitstreamName):
                         counter += 1
-                        bitstreamName = f"file({counter}).pdf"
+                        bitstreamName = f"{bitstreamName.split('.')[0]}({counter}).pdf"
                         
                     # Save the content to a PDF file
                     with open(f"{filePath}{bitstreamName}", "wb") as file:
