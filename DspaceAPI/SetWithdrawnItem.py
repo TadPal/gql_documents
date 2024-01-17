@@ -1,10 +1,11 @@
 import aiohttp
 import asyncio
 import json
-import os
 from .config import DSPACE_PORT, DSPACE_DOMAIN
 
-async def downloadItemContent(bitstreamId, bitstreamName, filePath=""):
+
+async def setWithdrawnItem(itemId, value):
+
     # JWT token
     async with aiohttp.ClientSession() as session:
         # Step 1: Get XSRF token from cookie
@@ -29,7 +30,7 @@ async def downloadItemContent(bitstreamId, bitstreamName, filePath=""):
             xsrf_cookie = response_step2.cookies.get("DSPACE-XSRF-COOKIE").value
 
             # Step 3: Access a new API endpoint to get specific XSRF token
-            url_step3 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/core/items"
+            url_step3 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/core/items/{itemId}"
             headers_step3 = {}
             data_step3 = {}
 
@@ -40,33 +41,29 @@ async def downloadItemContent(bitstreamId, bitstreamName, filePath=""):
             xsrf_cookie_step3 = response_step3.cookies.get("DSPACE-XSRF-COOKIE").value
 
             # Step 4: Another API endpoint using XSRF cookie from Step 3
-            url_step4 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/core/bitstreams/{bitstreamId}/content"
+            url_step4 = f"{DSPACE_DOMAIN}:{DSPACE_PORT}/server/api/core/items/{itemId}"
+            
             headers_step4 = {
                 "Content-Type": "application/json",
                 "Authorization": bearer_token,
                 "X-XSRF-TOKEN": xsrf_cookie_step3,  # Use XSRF cookie from Step 3
             }
+            data_step4 = [
+                {
+                    "op": "replace",
+                    "path": "/inArchive",
+                    "value": value
+                }
+            ]
 
-            async with session.get(url_step4, headers=headers_step4) as response_step4:
-                # You can access the content and headers as needed
-                if response_step4.status == 200:
-                    # Read the binary content
-                    content = await response_step4.read()
-                    
-                    # Check if the file already exists
-                    counter = 0
-                    while os.path.exists(bitstreamName):
-                        bitstreamName = bitstreamName.split('(')[0]
-                        counter += 1
-                        bitstreamName = f"{bitstreamName.split('.')[0]}({counter}).pdf"
-                        
-                    # Save the content to a PDF file
-                    with open(f"{filePath}{bitstreamName}", "wb") as file:
-                        file.write(content)
-                        
-                        
+            async with session.patch(
+                url_step4, headers=headers_step4, data=json.dumps(data_step4)
+            ) as response_step4:
+                # Print the response for Step 4
                 return response_step4.status
 
+
 # Run the asynchronous event loop
-# result = asyncio.run(downloadItemContent())
+
+# result = asyncio.run(setWithdrawnItem())
 # print(result)

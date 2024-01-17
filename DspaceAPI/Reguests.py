@@ -12,6 +12,7 @@ from .GetBitstreamItem import getBitstreamItem
 from .GetContentItem import downloadItemContent
 from .UpdateDescriptionItem import updateDescriptionItem
 from .AddDescriptionItem import addDescriptionItem
+from .SetWithdrawnItem import setWithdrawnItem
 
 login = login
 createWorkspaceItem = createWorkspaceItem
@@ -25,3 +26,4 @@ getBitstreamItem = getBitstreamItem
 downloadItemContent = downloadItemContent
 updateDescriptionItem = updateDescriptionItem
 addDescriptionItem = addDescriptionItem
+setWithdrawnItem = setWithdrawnItem

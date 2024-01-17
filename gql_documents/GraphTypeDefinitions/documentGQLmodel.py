@@ -15,6 +15,7 @@ from DspaceAPI.Reguests import (
     downloadItemContent,
     updateDescriptionItem,
     addDescriptionItem,
+    setWithdrawnItem,
 )
 
 
@@ -330,10 +331,19 @@ async def document_delete(
     rows = await loader.filter_by(id=document.id)
     row = next(rows, None)
 
-    if row is not None:
-        row = await loader.delete(row.id)
-        result.msg = "Ok"
+    
+    
+    if row is not None: 
+        #response_status = await setWithdrawnItem(itemId=row.dspace_id, value="true")
+        
+        #if response_status == 200:
+            row = await loader.delete(row.id)
+            result.msg = "Ok"
+            
     else:
         result.id = None
         result.msg = "Fail"
+        
+
+        
     return result
