@@ -17,6 +17,7 @@ class Mutation:
         dspace_add_bitstream,
         dspace_get_bitstream,
         community_insert,
+        collection_insert,
     )
 
     document_insert = document_insert
@@ -24,19 +25,21 @@ class Mutation:
     document_delete = document_delete
     dspace_add_bitstream = dspace_add_bitstream
     community_insert = community_insert
-
+    collection_insert = collection_insert
 @strawberry.type(description="""Type for query root""")
 class Query:
     from .documentGQLmodel import (
         documents_page, 
         document_by_id, 
         dspace_get_bitstream, 
-        communities_page
+        communities_page,
+        collections_page,
     )
     
     documents_page = documents_page
     document_by_id = document_by_id
     dspace_get_bitstream = dspace_get_bitstream
     communities_page = communities_page
+    collections_page = collections_page
 
 schema = strawberry.federation.Schema(query=Query, mutation=Mutation)

@@ -15,6 +15,8 @@ from .AddDescriptionItem import addDescriptionItem
 from .SetWithdrawnItem import setWithdrawnItem
 from .GetCommunities import getCommunities
 from .CreateCommunity import createCommunity
+from .CreateCollection import createCollection
+from .GetCollections import getCollections
 
 login = login
 createWorkspaceItem = createWorkspaceItem
@@ -31,3 +33,5 @@ addDescriptionItem = addDescriptionItem
 setWithdrawnItem = setWithdrawnItem
 getCommunities = getCommunities
 createCommunity = createCommunity
+createCollection = createCollection
+getCollections = getCollections

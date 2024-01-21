@@ -18,6 +18,8 @@ from DspaceAPI.Reguests import (
     setWithdrawnItem,
     getCommunities,
     createCommunity,
+    createCollection,
+    getCollections,
 )
 
 
@@ -253,6 +255,44 @@ async def communities_page(
 
     return result
 
+
+@strawberry.field(description="""collections""")
+async def collections_page(
+    self,
+    info: strawberry.types.Info,
+    skip: Optional[int] = 0,
+    limit: Optional[int] = 100,
+) -> DspaceResultModel:
+    result = DspaceResultModel()
+    
+    response = await getCollections()
+    # size of communities
+    
+    totalElements = response["response"]['page']["totalElements"]
+  
+    collections = []
+    
+    #insert community uuid and name to a list to view in GQL endpoint
+    for element in range(totalElements):
+        uuid = response["response"]["_embedded"]["collections"][element]['uuid']
+        name = response["response"]["_embedded"]["collections"][element]['name']
+        collections.append({uuid,name})
+
+    result.response = str(collections)
+    
+    if response["msg"] == 200:
+        result.msg = "OK"
+    elif response["msg"] == 204:
+        result.msg = "No Content"
+    elif response["msg"] == 401:
+        result.msg = "Unauthorized"
+    elif response["msg"] == 403:
+        result.msg = "Forbidden"
+    elif response["msg"] == 404:
+        result.msg = "Not found"
+
+    return result
+
 #####################################################################
 #
 # Mutation section
@@ -371,14 +411,29 @@ async def community_insert(
     
     if response["msg"] == 201:
         result.msg = "Ok"
-    elif response["msg"]   == 400:
-        result.msg = "Bad Request"
     elif response["msg"]   == 401:
         result.msg = "Unauthorized"
-    elif response["msg"]  == 403:
+
+    return result
+
+@strawberry.mutation(description="Create new collection")
+async def collection_insert(
+    self, info: strawberry.types.Info, parentId: uuid.UUID ,name: str, language: str
+) -> DspaceResultModel:
+    result = DspaceResultModel()
+
+    response = await createCollection(parentId = parentId ,name = name, language = language)
+    
+    result.response = str(response["response"])
+    
+    if response["msg"] == 201:
+        result.msg = "Ok"
+    elif response["msg"] == 401:
+        result.msg = "Unauthorized"
+    elif response["msg"] == 403:
         result.msg = "Forbidden"
-    elif response["msg"]   == 404:
-        result.msg = "Not found"
+    elif response["msg"] == 422:
+        result.msg = "UNPROCESSABLE ENTITY"
 
     return result
 
