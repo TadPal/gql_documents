@@ -26,11 +26,16 @@ class Mutation:
 
 @strawberry.type(description="""Type for query root""")
 class Query:
-    from .documentGQLmodel import documents_page, document_by_id, dspace_get_bitstream
-
+    from .documentGQLmodel import (
+        documents_page, 
+        document_by_id, 
+        dspace_get_bitstream, 
+        communities_page
+    )
+    
     documents_page = documents_page
     document_by_id = document_by_id
     dspace_get_bitstream = dspace_get_bitstream
-
+    communities_page = communities_page
 
 schema = strawberry.federation.Schema(query=Query, mutation=Mutation)

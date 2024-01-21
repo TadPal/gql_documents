@@ -13,6 +13,7 @@ from .GetContentItem import downloadItemContent
 from .UpdateDescriptionItem import updateDescriptionItem
 from .AddDescriptionItem import addDescriptionItem
 from .SetWithdrawnItem import setWithdrawnItem
+from .GetCommunities import getCommunities
 
 login = login
 createWorkspaceItem = createWorkspaceItem
@@ -27,3 +28,4 @@ downloadItemContent = downloadItemContent
 updateDescriptionItem = updateDescriptionItem
 addDescriptionItem = addDescriptionItem
 setWithdrawnItem = setWithdrawnItem
+getCommunities = getCommunities

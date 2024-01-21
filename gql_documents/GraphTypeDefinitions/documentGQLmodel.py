@@ -16,6 +16,7 @@ from DspaceAPI.Reguests import (
     updateDescriptionItem,
     addDescriptionItem,
     setWithdrawnItem,
+    getCommunities,
 )
 
 
@@ -206,6 +207,20 @@ async def dspace_get_bitstream(
 
     return result
 
+
+
+@strawberry.field(description="""communities""")
+async def communities_page(
+    self,
+    info: strawberry.types.Info,
+    skip: Optional[int] = 0,
+    limit: Optional[int] = 100,
+) -> DocumentResultGQLModel:
+    result = DocumentResultGQLModel()
+    
+    result.dspace_response = str(await getCommunities())
+
+    return result
 
 #####################################################################
 #
