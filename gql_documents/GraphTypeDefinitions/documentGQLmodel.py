@@ -17,6 +17,7 @@ from DspaceAPI.Reguests import (
     addDescriptionItem,
     setWithdrawnItem,
     getCommunities,
+    createCommunity,
 )
 
 
@@ -292,7 +293,6 @@ async def document_insert(
         result.msg = "Ok"
     return result
 
-
 @strawberry.mutation(description="Update existing document")
 async def document_update(
     self, info: strawberry.types.Info, document: DocumentUpdateGQLModel
@@ -338,13 +338,37 @@ async def dspace_add_bitstream(
 
     # get budle id
     response_json = await getBundleId(document.dspace_id)
-    bundleId = response_json["_embedded"]["bundles"][0]["uuid"]
+    bundleId = response_json["response"]["_embedded"]["bundles"][0]["uuid"]
 
     # add bitstream to that bundle
     response = await addBitstreamsItem(bundleId=bundleId, filename=filename)
     
     result.response = str(response["response"])
 
+    if response["msg"] == 201:
+        result.msg = "Ok"
+    elif response["msg"]   == 400:
+        result.msg = "Bad Request"
+    elif response["msg"]   == 401:
+        result.msg = "Unauthorized"
+    elif response["msg"]  == 403:
+        result.msg = "Forbidden"
+    elif response["msg"]   == 404:
+        result.msg = "Not found"
+
+    return result
+
+
+
+@strawberry.mutation(description="Create new comunnity")
+async def community_insert(
+    self, info: strawberry.types.Info, name: str, language: [str]
+) -> DspaceResultModel:
+    result = DspaceResultModel()
+
+    response = await createCommunity(name, language)
+    result.response = str(response["response"])
+    
     if response["msg"] == 201:
         result.msg = "Ok"
     elif response["msg"]   == 400:
@@ -369,7 +393,6 @@ async def document_delete(
     row = next(rows, None)
 
 
-    
     if row is not None: 
         #response_status = await setWithdrawnItem(itemId=row.dspace_id, value="true")
         
@@ -380,7 +403,5 @@ async def document_delete(
     else:
         result.id = None
         result.msg = "Fail"
-        
-
         
     return result

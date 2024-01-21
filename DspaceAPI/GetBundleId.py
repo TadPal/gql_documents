@@ -51,8 +51,12 @@ async def getBundleId(itemsId):
             
             async with session.get(
                 url_step4, headers=headers_step4) as response_step4:
-
-                return await response_step4.json()
+                result = {}
+            
+                result["response"] = await response_step4.json()
+                result["msg"] = response_step4.status
+                
+                return result
 
 # Run the asynchronous event loop
 

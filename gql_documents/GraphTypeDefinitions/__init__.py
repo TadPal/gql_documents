@@ -16,13 +16,14 @@ class Mutation:
         document_delete,
         dspace_add_bitstream,
         dspace_get_bitstream,
+        community_insert,
     )
 
     document_insert = document_insert
     document_update = document_update
     document_delete = document_delete
     dspace_add_bitstream = dspace_add_bitstream
-
+    community_insert = community_insert
 
 @strawberry.type(description="""Type for query root""")
 class Query:

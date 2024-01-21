@@ -58,9 +58,9 @@ async def addBundleItem(itemsId):
                 url_step4, headers=headers_step4, data=json.dumps(data_step4)
             ) as response_step4:
                 # Print the response for Step 4
-                return await response_step4.json()
-
-# Run the asynchronous event loop
-
-# result = asyncio.run(addBundleItem())
-# print(result)
+                result = {}
+            
+                result["response"] = await response_step4.json()
+                result["msg"] = response_step4.status
+                
+                return result

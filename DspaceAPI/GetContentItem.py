@@ -65,11 +65,11 @@ async def downloadItemContent(bitstreamId, bitstreamName, filePath=""):
                         file.write(content)
                         
                         result = {}
-        
-                        result["msg"] = response_step4.status
+            
                         result["response"] = ""
-                    
-                return result
+                        result["msg"] = response_step4.status
+                        
+                        return result
 # Run the asynchronous event loop
 # result = asyncio.run(downloadItemContent())
 # print(result)

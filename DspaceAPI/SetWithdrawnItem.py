@@ -60,7 +60,12 @@ async def setWithdrawnItem(itemId, value):
                 url_step4, headers=headers_step4, data=json.dumps(data_step4)
             ) as response_step4:
                 # Print the response for Step 4
-                return response_step4.status
+                result = {}
+        
+                result["msg"] = response_step4.status
+                result["response"] = "await response_step4.json()"
+                        
+                return result
 
 
 # Run the asynchronous event loop

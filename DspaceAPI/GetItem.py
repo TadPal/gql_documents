@@ -39,10 +39,10 @@ async def getItem(itemsId):
             }
 
         async with session.get(url_step3, headers=headers_step3) as response_step3:
-            return await response_step3.json()
+                result = {}
+            
+                result["response"] = await response_step3.json()
+                result["msg"] = response_step3.status
+                
+                return result
 
-
-# Run the asynchronous event loop
-
-# result = asyncio.run(addTitleItem())
-# print(result)
