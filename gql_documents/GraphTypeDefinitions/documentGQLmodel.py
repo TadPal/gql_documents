@@ -362,7 +362,7 @@ async def dspace_add_bitstream(
 
 @strawberry.mutation(description="Create new comunnity")
 async def community_insert(
-    self, info: strawberry.types.Info, name: str, language: [str]
+    self, info: strawberry.types.Info, name: str, language: str
 ) -> DspaceResultModel:
     result = DspaceResultModel()
 
