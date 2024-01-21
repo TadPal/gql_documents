@@ -1,7 +1,7 @@
 import aiohttp
 import asyncio
 import json
-from config import DSPACE_PORT, DSPACE_DOMAIN
+from .config import DSPACE_PORT, DSPACE_DOMAIN
 
 
 async def createCommunity(name, language="cz"):
@@ -70,6 +70,3 @@ async def createCommunity(name, language="cz"):
 
 
 # Run the asynchronous event loop
-
-result = asyncio.run(createCommunity(name="journal community"))
-print(result)

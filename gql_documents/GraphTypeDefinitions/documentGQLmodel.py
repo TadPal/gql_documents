@@ -130,6 +130,16 @@ class DocumentResultGQLModel:
         result = await DocumentGQLModel.resolve_reference(info, self.id)
         return result
 
+@strawberry.type()
+class DspaceResultModel:
+    msg: str = strawberry.field(
+        default=None, description="""status of operation"""
+    )
+
+    response: Optional[str] = strawberry.field(
+        default=None, description="""DSPACE response JSON in list"""
+    )
+
 
 #####################################################################
 #
@@ -173,40 +183,36 @@ async def document_by_id(
 @strawberry.field(description="Get bitstream from dpsace")
 async def dspace_get_bitstream(
     self, info: strawberry.types.Info, id: uuid.UUID
-) -> Optional[DocumentResultGQLModel]:
-    result = DocumentResultGQLModel()
+) -> Optional[DspaceResultModel]:
+
+    result = DspaceResultModel()
     document = await DocumentGQLModel.resolve_reference(info, id)
 
     # get budle id WARNING: HARDCODED [0] its a list!
     response_json = await getBundleId(document.dspace_id)
     bundlesId = response_json["_embedded"]["bundles"][0]["uuid"]
 
+    # get bistream id
     response_json = await getBitstreamItem(bundlesId)
     bitstreamId = response_json["_embedded"]["bitstreams"][0]["uuid"]
     bitstreamName = response_json["_embedded"]["bitstreams"][0]["name"]
 
-    # add bitstream to that bundle
-    response_status = await downloadItemContent(bitstreamId, bitstreamName)
-    result.id = None
+    # download specific bitstream content
+    response = await downloadItemContent(bitstreamId, bitstreamName)
+    result.response = response["response"]
 
-    if response_status == 200:
+    if response["msg"] == 200:
         result.msg = "Ok"
-        result.id = id
-
-    elif response_status == 204:
+    elif response["msg"]  == 204:
         result.msg = "No Content"
-
-    elif response_status == 401:
+    elif response["msg"] == 401:
         result.msg = "Unauthorized"
-
-    elif response_status == 403:
+    elif response["msg"] == 403:
         result.msg = "Forbidden"
-
-    elif response_status == 404:
+    elif response["msg"] == 404:
         result.msg = "Not found"
-
+    
     return result
-
 
 
 @strawberry.field(description="""communities""")
@@ -215,10 +221,34 @@ async def communities_page(
     info: strawberry.types.Info,
     skip: Optional[int] = 0,
     limit: Optional[int] = 100,
-) -> DocumentResultGQLModel:
-    result = DocumentResultGQLModel()
+) -> DspaceResultModel:
+    result = DspaceResultModel()
     
-    result.dspace_response = str(await getCommunities())
+    response = await getCommunities()
+    # size of communities
+    
+    totalElements = response["response"]['page']["totalElements"]
+  
+    communities = []
+    
+    #insert community uuid and name to a list to view in GQL endpoint
+    for element in range(totalElements):
+        uuid = response["response"]["_embedded"]["communities"][element]['uuid']
+        name = response["response"]["_embedded"]["communities"][element]['name']
+        communities.append({uuid,name})
+
+    result.response = str(communities)
+    
+    if response["msg"] == 200:
+        result.msg = "OK"
+    elif response["msg"] == 204:
+        result.msg = "No Content"
+    elif response["msg"] == 401:
+        result.msg = "Unauthorized"
+    elif response["msg"] == 403:
+        result.msg = "Forbidden"
+    elif response["msg"] == 404:
+        result.msg = "Not found"
 
     return result
 
@@ -246,14 +276,13 @@ async def document_insert(
 
     # DSPACE API reguest to add title and name it
 
-    dspace_result = await addTitleItem(itemsId=dspaceID, titleName=document.name)
-    dspace_result = await addDescriptionItem(
+    await addTitleItem(itemsId=dspaceID, titleName=document.name)
+    await addDescriptionItem(
         itemsId=dspaceID, description=document.description
     )
 
-    dspace_bundle = await addBundleItem(itemsId=dspaceID)
-    dspace_bundle = dspace_bundle.get("uuid")
-
+    await addBundleItem(itemsId=dspaceID)
+    
     row = await loader.insert(document)
     if row is None:
         result.id = None
@@ -302,9 +331,8 @@ async def document_update(
 @strawberry.mutation(description="Add bitstream to dpsace")
 async def dspace_add_bitstream(
     self, info: strawberry.types.Info, document: DocumentUpdateGQLModel, filename: str
-) -> DocumentResultGQLModel:
-    loader = getLoaders(info).documents
-    result = DocumentResultGQLModel()
+) -> DspaceResultModel:
+    result = DspaceResultModel()
 
     document = await DocumentGQLModel.resolve_reference(info, document.id)
 
@@ -313,25 +341,19 @@ async def dspace_add_bitstream(
     bundleId = response_json["_embedded"]["bundles"][0]["uuid"]
 
     # add bitstream to that bundle
-    response_status = await addBitstreamsItem(bundleId=bundleId, filename=filename)
+    response = await addBitstreamsItem(bundleId=bundleId, filename=filename)
+    
+    result.response = str(response["response"])
 
-    row = await loader.update(document)
-    result.id = None
-
-    if response_status == 201:
+    if response["msg"] == 201:
         result.msg = "Ok"
-        result.id = row.id
-
-    elif response_status == 400:
+    elif response["msg"]   == 400:
         result.msg = "Bad Request"
-
-    elif response_status == 401:
+    elif response["msg"]   == 401:
         result.msg = "Unauthorized"
-
-    elif response_status == 403:
+    elif response["msg"]  == 403:
         result.msg = "Forbidden"
-
-    elif response_status == 404:
+    elif response["msg"]   == 404:
         result.msg = "Not found"
 
     return result
@@ -346,7 +368,7 @@ async def document_delete(
     rows = await loader.filter_by(id=document.id)
     row = next(rows, None)
 
-    
+
     
     if row is not None: 
         #response_status = await setWithdrawnItem(itemId=row.dspace_id, value="true")

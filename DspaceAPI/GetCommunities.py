@@ -51,19 +51,14 @@ async def getCommunities():
             
             async with session.get(
                 url_step4, headers=headers_step4) as response_step4:
-
-
-                response = await response_step4.json()
-                totalElements = response.get('page').get("totalElements")
-                communities = []
                 
+                result = {}
+            
+                result["response"] = await response_step4.json()
+                result["msg"] = response_step4.status
                 
-                for element in range(totalElements):
-                    uuid = response["_embedded"]["communities"][element]['uuid']
-                    name = response["_embedded"]["communities"][element]['name']
-                    communities.append({uuid,name})
-    
-                return communities
+                return result
+                
                 
 
 # Run the asynchronous event loop

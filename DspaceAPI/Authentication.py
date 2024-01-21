@@ -37,7 +37,3 @@ async def login():
             # Print the response for Step 3
             return await response_step3.text()
 
-
-# import asyncio
-# result = asyncio.run(login())
-# print(result)

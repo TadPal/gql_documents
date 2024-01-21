@@ -75,8 +75,9 @@ async def addBitstreamsItem(bundleId, file_path="files", filename="file.pdf",con
         # Make the POST request with multipart/form-data
         async with session.post(url_step4, headers=headers_step4, data=form_data) as response_step4:
             # Print the response for Step 4
-            return response_step4.status
-
-# Run the asynchronous event loop
-# result = asyncio.run(addBitstreamsItem())
-# print(result)
+            result = {}
+            
+            result["response"] = await response_step4.json()
+            result["msg"] = response_step4.status
+                
+            return result

@@ -62,7 +62,4 @@ async def addTitleItem(itemsId, titleName, language="cz"):
                 return await response_step4.json()
 
 
-# Run the asynchronous event loop
 
-# result = asyncio.run(addTitleItem())
-# print(result)

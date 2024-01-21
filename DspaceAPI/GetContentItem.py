@@ -64,9 +64,12 @@ async def downloadItemContent(bitstreamId, bitstreamName, filePath=""):
                     with open(f"{filePath}{bitstreamName}", "wb") as file:
                         file.write(content)
                         
-                        
-                return response_step4.status
-
+                        result = {}
+        
+                        result["msg"] = response_step4.status
+                        result["response"] = ""
+                    
+                return result
 # Run the asynchronous event loop
 # result = asyncio.run(downloadItemContent())
 # print(result)
