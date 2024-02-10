@@ -17,6 +17,7 @@ from .GetCommunities import getCommunities
 from .CreateCommunity import createCommunity
 from .CreateCollection import createCollection
 from .GetCollections import getCollections
+from .CreateItem import createItem
 
 login = login
 createWorkspaceItem = createWorkspaceItem
@@ -35,3 +36,4 @@ getCommunities = getCommunities
 createCommunity = createCommunity
 createCollection = createCollection
 getCollections = getCollections
+createItem = createItem

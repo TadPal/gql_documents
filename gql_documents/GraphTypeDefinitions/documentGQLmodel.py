@@ -20,6 +20,7 @@ from DspaceAPI.Reguests import (
     createCommunity,
     createCollection,
     getCollections,
+    createItem,
 )
 
 
@@ -193,12 +194,12 @@ async def dspace_get_bitstream(
 
     # get budle id WARNING: HARDCODED [0] its a list!
     response_json = await getBundleId(document.dspace_id)
-    bundlesId = response_json["_embedded"]["bundles"][0]["uuid"]
+    bundlesId = response_json["response"]["_embedded"]["bundles"][0]["uuid"]
 
     # get bistream id
     response_json = await getBitstreamItem(bundlesId)
-    bitstreamId = response_json["_embedded"]["bitstreams"][0]["uuid"]
-    bitstreamName = response_json["_embedded"]["bitstreams"][0]["name"]
+    bitstreamId = response_json["response"]["_embedded"]["bitstreams"][0]["uuid"]
+    bitstreamName = response_json["response"]["_embedded"]["bitstreams"][0]["name"]
 
     # download specific bitstream content
     response = await downloadItemContent(bitstreamId, bitstreamName)
@@ -302,29 +303,36 @@ async def collections_page(
 
 @strawberry.mutation(description="Defines a new document")
 async def document_insert(
-    self, info: strawberry.types.Info, document: DocumentInsertGQLModel
+    self, info: strawberry.types.Info, document: DocumentInsertGQLModel, collectionId: str, type: Optional[str], language: Optional[str],
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
     result = DocumentResultGQLModel()
 
     # DSpace reguest to create an item and returns its uuid
-    dspaceID = await createWorkspaceItem()
+    response = await createItem(
+                                    collectionId = collectionId, 
+                                    title = document.name, 
+                                    author = document.author_id,
+                                    type=type, 
+                                    language=language
+                                )
 
-    dspaceID = dspaceID.get("_embedded").get("item").get("uuid")
-    if isinstance(dspaceID, str):
-        dspaceID = uuid.UUID(dspaceID)
-    document.dspace_id = dspaceID
-
-    # DSPACE API reguest to add title and name it
-
-    await addTitleItem(itemsId=dspaceID, titleName=document.name)
+    #seperate id from response
+    itemId = response["response"]["uuid"]
+    
+    if isinstance(itemId, str):
+        itemId = uuid.UUID(itemId)
+    document.dspace_id = itemId
+    result.dspace_response = str(response["response"])
+    #await addTitleItem(itemsId=itemId, titleName=document.name)
     await addDescriptionItem(
-        itemsId=dspaceID, description=document.description
+        itemsId=itemId, description=document.description
     )
-
-    await addBundleItem(itemsId=dspaceID)
+    
+    await addBundleItem(itemsId=itemId)
     
     row = await loader.insert(document)
+    
     if row is None:
         result.id = None
         result.msg = "Fail"
@@ -355,7 +363,8 @@ async def document_update(
         response_status = await updateDescriptionItem(
             document.dspace_id, newDescription
         )
-
+        
+        
     result = DocumentResultGQLModel()
     row = await loader.update(document)
     if row is None:
@@ -397,8 +406,6 @@ async def dspace_add_bitstream(
         result.msg = "Not found"
 
     return result
-
-
 
 @strawberry.mutation(description="Create new comunnity")
 async def community_insert(
@@ -449,9 +456,9 @@ async def document_delete(
 
 
     if row is not None: 
-        #response_status = await setWithdrawnItem(itemId=row.dspace_id, value="true")
+        response_status = await setWithdrawnItem(itemId=row.dspace_id, value="true")
         
-        #if response_status == 200:
+        if response_status["msg"] == 200:
             row = await loader.delete(row.id)
             result.msg = "Ok"
             

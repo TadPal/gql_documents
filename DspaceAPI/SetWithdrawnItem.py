@@ -51,8 +51,8 @@ async def setWithdrawnItem(itemId, value):
             data_step4 = [
                 {
                     "op": "replace",
-                    "path": "/inArchive",
-                    "value": value
+                    "path": "/withdrawn",
+                    "value": f"{value}",
                 }
             ]
 
@@ -63,7 +63,7 @@ async def setWithdrawnItem(itemId, value):
                 result = {}
         
                 result["msg"] = response_step4.status
-                result["response"] = "await response_step4.json()"
+                result["response"] = await response_step4.json()
                         
                 return result
 
