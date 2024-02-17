@@ -4,7 +4,13 @@ import json
 from .config import DSPACE_PORT, DSPACE_DOMAIN
 import os
 
-async def addBitstreamsItem(bundleId, file_path="files", filename="file.pdf",contentType ="pdf"):
+""" There are serveral types:
+#   "ORIGINAl" = docuemnt its self
+#   "THUMBNAIL" = preview photo of document
+#   "LICENCE"  = licence ig...
+"""
+
+async def addBitstreamsItem(bundleId, file_path="files", filename="file.pdf",contentType ="pdf",type="ORIGINAL"):
     
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -67,7 +73,7 @@ async def addBitstreamsItem(bundleId, file_path="files", filename="file.pdf",con
                     }
                 ]
             },
-            "bundleName": "ORIGINAL"
+            "bundleName": f"{type}"
         }
 
         form_data.add_field('properties', json.dumps(properties), content_type='application/json')
