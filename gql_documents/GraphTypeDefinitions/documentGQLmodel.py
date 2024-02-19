@@ -134,11 +134,10 @@ class DocumentResultGQLModel:
         result = await DocumentGQLModel.resolve_reference(info, self.id)
         return result
 
+
 @strawberry.type()
 class DspaceResultModel:
-    msg: str = strawberry.field(
-        default=None, description="""status of operation"""
-    )
+    msg: str = strawberry.field(default=None, description="""status of operation""")
 
     response: Optional[str] = strawberry.field(
         default=None, description="""DSPACE response JSON in list"""
@@ -198,16 +197,19 @@ async def dspace_get_bitstream(
 
     # get bistream id
     response_json = await getBitstreamItem(bundlesId)
-    bitstreamId = response_json["response"]["_embedded"]["bitstreams"][0]["uuid"]
-    bitstreamName = response_json["response"]["_embedded"]["bitstreams"][0]["name"]
+    if len(response_json["response"]["_embedded"]["bitstreams"]) > 0:
+        bitstreamId = response_json["response"]["_embedded"]["bitstreams"][0]["uuid"]
+        bitstreamName = response_json["response"]["_embedded"]["bitstreams"][0]["name"]
+    else:
+        result.msg = "No Content"
+        return result
 
     # download specific bitstream content
     response = await downloadItemContent(bitstreamId, bitstreamName)
     result.response = response["response"]
-
     if response["msg"] == 200:
         result.msg = "Ok"
-    elif response["msg"]  == 204:
+    elif response["msg"] == 204:
         result.msg = "No Content"
     elif response["msg"] == 401:
         result.msg = "Unauthorized"
@@ -215,7 +217,7 @@ async def dspace_get_bitstream(
         result.msg = "Forbidden"
     elif response["msg"] == 404:
         result.msg = "Not found"
-    
+
     return result
 
 
@@ -227,24 +229,24 @@ async def communities_page(
     limit: Optional[int] = 100,
 ) -> DspaceResultModel:
     result = DspaceResultModel()
-    
+
     response = await getCommunities()
     # size of communities
-    
-    totalElements = response["response"]['page']["totalElements"]
-  
+
+    totalElements = response["response"]["page"]["totalElements"]
+
     communities = []
-    
-    #insert community uuid and name to a list to view in GQL endpoint
+
+    # insert community uuid and name to a list to view in GQL endpoint
     for element in range(totalElements):
-        uuid = response["response"]["_embedded"]["communities"][element]['uuid']
-        name = response["response"]["_embedded"]["communities"][element]['name']
-        communities.append({uuid,name})
+        uuid = response["response"]["_embedded"]["communities"][element]["uuid"]
+        name = response["response"]["_embedded"]["communities"][element]["name"]
+        communities.append({uuid, name})
 
     result.response = str(communities)
-    
+
     if response["msg"] == 200:
-        result.msg = "OK"
+        result.msg = "Ok"
     elif response["msg"] == 204:
         result.msg = "No Content"
     elif response["msg"] == 401:
@@ -265,24 +267,24 @@ async def collections_page(
     limit: Optional[int] = 100,
 ) -> DspaceResultModel:
     result = DspaceResultModel()
-    
+
     response = await getCollections()
     # size of communities
-    
-    totalElements = response["response"]['page']["totalElements"]
-  
+
+    totalElements = response["response"]["page"]["totalElements"]
+
     collections = []
-    
-    #insert community uuid and name to a list to view in GQL endpoint
+
+    # insert community uuid and name to a list to view in GQL endpoint
     for element in range(totalElements):
-        uuid = response["response"]["_embedded"]["collections"][element]['uuid']
-        name = response["response"]["_embedded"]["collections"][element]['name']
-        collections.append({uuid,name})
+        uuid = response["response"]["_embedded"]["collections"][element]["uuid"]
+        name = response["response"]["_embedded"]["collections"][element]["name"]
+        collections.append({uuid, name})
 
     result.response = str(collections)
-    
+
     if response["msg"] == 200:
-        result.msg = "OK"
+        result.msg = "Ok"
     elif response["msg"] == 204:
         result.msg = "No Content"
     elif response["msg"] == 401:
@@ -294,6 +296,7 @@ async def collections_page(
 
     return result
 
+
 #####################################################################
 #
 # Mutation section
@@ -303,36 +306,39 @@ async def collections_page(
 
 @strawberry.mutation(description="Defines a new document")
 async def document_insert(
-    self, info: strawberry.types.Info, document: DocumentInsertGQLModel, collectionId: str, type: Optional[str], language: Optional[str],
+    self,
+    info: strawberry.types.Info,
+    document: DocumentInsertGQLModel,
+    collectionId: uuid.UUID,
+    type: Optional[str],
+    language: Optional[str],
 ) -> DocumentResultGQLModel:
     loader = getLoaders(info).documents
     result = DocumentResultGQLModel()
 
     # DSpace reguest to create an item and returns its uuid
     response = await createItem(
-                                    collectionId = collectionId, 
-                                    title = document.name, 
-                                    author = document.author_id,
-                                    type=type, 
-                                    language=language
-                                )
+        collectionId=collectionId,
+        title=document.name,
+        author=document.author_id,
+        type=type,
+        language=language,
+    )
 
-    #seperate id from response
+    # seperate id from response
     itemId = response["response"]["uuid"]
-    
+
     if isinstance(itemId, str):
         itemId = uuid.UUID(itemId)
     document.dspace_id = itemId
     result.dspace_response = str(response["response"])
-    #await addTitleItem(itemsId=itemId, titleName=document.name)
-    await addDescriptionItem(
-        itemsId=itemId, description=document.description
-    )
-    
+    # await addTitleItem(itemsId=itemId, titleName=document.name)
+    await addDescriptionItem(itemsId=itemId, description=document.description)
+
     await addBundleItem(itemsId=itemId)
-    
+
     row = await loader.insert(document)
-    
+
     if row is None:
         result.id = None
         result.msg = "Fail"
@@ -340,6 +346,7 @@ async def document_insert(
         result.id = row.id
         result.msg = "Ok"
     return result
+
 
 @strawberry.mutation(description="Update existing document")
 async def document_update(
@@ -363,8 +370,7 @@ async def document_update(
         response_status = await updateDescriptionItem(
             document.dspace_id, newDescription
         )
-        
-        
+
     result = DocumentResultGQLModel()
     row = await loader.update(document)
     if row is None:
@@ -391,21 +397,22 @@ async def dspace_add_bitstream(
 
     # add bitstream to that bundle
     response = await addBitstreamsItem(bundleId=bundleId, filename=filename)
-    
+
     result.response = str(response["response"])
 
     if response["msg"] == 201:
         result.msg = "Ok"
-    elif response["msg"]   == 400:
+    elif response["msg"] == 400:
         result.msg = "Bad Request"
-    elif response["msg"]   == 401:
+    elif response["msg"] == 401:
         result.msg = "Unauthorized"
-    elif response["msg"]  == 403:
+    elif response["msg"] == 403:
         result.msg = "Forbidden"
-    elif response["msg"]   == 404:
+    elif response["msg"] == 404:
         result.msg = "Not found"
 
     return result
+
 
 @strawberry.mutation(description="Create new comunnity")
 async def community_insert(
@@ -415,24 +422,25 @@ async def community_insert(
 
     response = await createCommunity(name, language)
     result.response = str(response["response"])
-    
+
     if response["msg"] == 201:
         result.msg = "Ok"
-    elif response["msg"]   == 401:
+    elif response["msg"] == 401:
         result.msg = "Unauthorized"
 
     return result
 
+
 @strawberry.mutation(description="Create new collection")
 async def collection_insert(
-    self, info: strawberry.types.Info, parentId: uuid.UUID ,name: str, language: str
+    self, info: strawberry.types.Info, parentId: uuid.UUID, name: str, language: str
 ) -> DspaceResultModel:
     result = DspaceResultModel()
 
-    response = await createCollection(parentId = parentId ,name = name, language = language)
-    
+    response = await createCollection(parentId=parentId, name=name, language=language)
+
     result.response = str(response["response"])
-    
+
     if response["msg"] == 201:
         result.msg = "Ok"
     elif response["msg"] == 401:
@@ -454,16 +462,15 @@ async def document_delete(
     rows = await loader.filter_by(id=document.id)
     row = next(rows, None)
 
-
-    if row is not None: 
+    if row is not None:
         response_status = await setWithdrawnItem(itemId=row.dspace_id, value="true")
-        
+
         if response_status["msg"] == 200:
             row = await loader.delete(row.id)
             result.msg = "Ok"
-            
+
     else:
         result.id = None
         result.msg = "Fail"
-        
+
     return result

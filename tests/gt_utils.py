@@ -36,7 +36,6 @@ def createByIdTest(tableName, queryEndpoint, attributeNames=["id"]):
             query, context_value=context_value, variable_values=variable_values
         )
         assert resp.errors is None
-
         respdata = resp.data[queryEndpoint]
 
         assert respdata is not None
