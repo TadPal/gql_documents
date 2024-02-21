@@ -82,6 +82,11 @@ class DocumentGQLModel:
     def author_id(self) -> uuid.UUID:
         # sync method which returns Awaitable :)
         return self.author_id
+    
+    @strawberry.field(description="""Author of the document""")
+    def group_id(self) -> uuid.UUID:
+        # sync method which returns Awaitable :)
+        return self.group_id
 
     @strawberry.field(description="""DSpace id""")
     def dspace_id(self) -> uuid.UUID:
@@ -97,6 +102,7 @@ class DocumentInsertGQLModel:
     author_id: Optional[uuid.UUID] = strawberry.field(
         default=None, description="ID of Author"
     )
+    group_id: Optional[uuid.UUID] = strawberry.field(default=None, description="Owner group ID")
 
 
 @strawberry.input()
@@ -112,6 +118,7 @@ class DocumentUpdateGQLModel:
     author_id: Optional[uuid.UUID] = strawberry.field(
         default=None, description="ID of Author"
     )
+    group_id: Optional[uuid.UUID] = strawberry.field(default=None, description="Owner group ID")
 
 
 @strawberry.type()

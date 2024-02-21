@@ -12,6 +12,7 @@ class DocumentModel(BaseModel):
 
     name = Column(String)
     author_id = Column(Uuid, index=True, nullable=True)
+    group_id = Column(Uuid, index=True, nullable=True)
     description = Column(String, comment="Brief description of the document")
 
     created = Column(DateTime, server_default=sqlalchemy.sql.func.now())

@@ -64,7 +64,7 @@ async def test_document_mutation():
     variable_values = {
         "name": name,
         "description": description,
-        "collectionId": "c9895381-5370-4261-bd5b-13fd671189f9",
+        "collectionId": "99e5b62b-613d-4faf-80d9-ad20506413d5", #"c9895381-5370-4261-bd5b-13fd671189f9",
         "type": "pdf",
         "language": "Czech",
     }
@@ -135,7 +135,7 @@ async def test_get_dspace_bitstream():
     async_session_maker = await prepare_in_memory_sqllite()
     await prepare_demodata(async_session_maker)
 
-    id = "b7e8c6f7-9e51-4712-9dc5-9b5e3ad5a2fa"
+    id = "0d919a2c-fe56-4b10-9e9d-b8c5715a6666" #"b7e8c6f7-9e51-4712-9dc5-9b5e3ad5a2fa"
 
     query = """
             query ($id: UUID!) {
