@@ -197,10 +197,12 @@ async def dspace_get_bitstream(
 
     result = DspaceResultModel()
     document = await DocumentGQLModel.resolve_reference(info, id)
-
+    
     # get budle id WARNING: HARDCODED [0] its a list!
     response_json = await getBundleId(document.dspace_id)
+    print(response_json)
     bundlesId = response_json["response"]["_embedded"]["bundles"][0]["uuid"]
+
 
     # get bistream id
     response_json = await getBitstreamItem(bundlesId)

@@ -64,7 +64,7 @@ async def test_document_mutation():
     variable_values = {
         "name": name,
         "description": description,
-        "collectionId": "99e5b62b-613d-4faf-80d9-ad20506413d5", #"c9895381-5370-4261-bd5b-13fd671189f9",
+        "collectionId": "7b022985-a416-49f4-b485-3d6f7d522d94", #"c9895381-5370-4261-bd5b-13fd671189f9",
         "type": "pdf",
         "language": "Czech",
     }
