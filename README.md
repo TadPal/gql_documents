@@ -1,4 +1,36 @@
-# ISDatabase
+# Running Dspace
+
+Pull this repository from github <a>https://github.com/DSpace/DSpace/tree/main</a>
+
+Leave the code as is or change the settings based on the documentation
+
+Change the ports in docker-compose.yml file to avoid collisions
+
+### Build DSpace
+```bash
+docker compose -f docker-compose.yml -f docker-compose-cli.yml build
+```
+
+### Run DSpace with Angular frontend
+```bash
+docker compose -p d8 -f docker-compose.yml -f dspace/src/main/docker-compose/docker-compose-angular.yml up -d
+```
+
+## Import test data
+### Create an admin account.  By default, the dspace-cli container runs the dspace command.
+```
+docker compose -p d8 -f docker-compose-cli.yml run --rm dspace-cli create-administrator -e test@test.edu -f admin -l user -p admin -c en
+```
+
+### Download a Zip file of AIP content and ingest test data
+```
+docker compose -p d8 -f docker-compose-cli.yml -f dspace/src/main/docker-compose/cli.ingest.yml run --rm dspace-cli
+```
+
+
+---
+
+## ISDatabase
 
 Database backend for university site. Project is based on SQLAlchemy and GraphQL (strawberry federated).
 <br/><br/>
