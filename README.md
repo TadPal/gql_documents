@@ -23,7 +23,7 @@ docker compose -p d8 -f docker-compose-cli.yml run --rm dspace-cli create-admini
 docker compose -p d8 -f docker-compose-cli.yml -f dspace/src/main/docker-compose/cli.ingest.yml run --rm dspace-cli
 ```
 
-
+### Now you can use dspace as a part of the federation
 ---
 
 ## ISDatabase
