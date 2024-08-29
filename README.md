@@ -2,10 +2,6 @@
 
 Pull this repository from github <a>https://github.com/TadPal/UOIS_Dspace_Fork
 
-Leave the code as is or change the settings based on the documentation
-
-Change the ports in docker-compose.yml file to avoid collisions
-
 ### Build DSpace
 ```bash
 docker compose -f docker-compose.yml -f docker-compose-cli.yml build
