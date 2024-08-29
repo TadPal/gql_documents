@@ -1,6 +1,6 @@
 # Running Dspace
 
-Pull this repository from github <a>https://github.com/DSpace/DSpace/tree/main</a>
+Pull this repository from github <a>https://github.com/TadPal/UOIS_Dspace_Fork
 
 Leave the code as is or change the settings based on the documentation
 
