@@ -33,20 +33,6 @@ Database backend for university site. Project is based on SQLAlchemy and GraphQL
 This project contains only SQLAlchemy models and GraphQL endpoint to provide data from the postgres database running in separate container. To successfully start this application you need to have a running postgres database (for instance in docker container).
 <br/><br/>
 
-There are two supported ways to start the application:
-<br/><br/>
-
-Start the app without the docker
-
-- is quite complicated as it is part of federation API, prefer use in docker
-- you need to have running postgres database which is ready to use
-- change the ComposeConnectionString inner constants in DBDefinition.py to your postgres address (see used pattern)
-- to start the app outside of docker use the following command:
-  uvicorn main:app --reload
-- after application startup you can access the graphQL UI on ip given by uvicorn - remember to add /gql (example: http://127.0.0.1:8000/gql)
-- by default the app creates some random database after every startup (not all tables are populated with data)
-  <br/><br/>
-
 Start the app inside the docker using docker-compose.yml (recommended)
 
 - to start the app as a docker container you first need to create the gql_core image - to do this use following command:
@@ -63,7 +49,7 @@ Start the app inside the docker using docker-compose.yml (recommended)
 - only gql endpoint is available for other device outside of docker network - to access the GraphQL UI open http://localhost:82/gql on your device
   <br/><br/>
 
-- in this version of our project the database is populated with random data (not all databse is populated - for testing purposes only)
+- in this version of our project the database is populated with random data (not all database is populated - for testing purposes only)
   <br/><br/>
 
 pytest --cov-report term-missing --cov=gql_documents tests
