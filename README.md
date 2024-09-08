@@ -2,7 +2,7 @@
 
 Pull this repository from github <a>https://github.com/TadPal/UOIS_Dspace_Fork
 
-### Build DSpace
+### Build DSpace in the UOIS_Dspace_Fork folder
 ```bash
 docker compose -f docker-compose.yml -f docker-compose-cli.yml build
 ```
